@@ -9,6 +9,7 @@ import {
     Code2,
     Cpu,
     MapPin,
+    Award,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 /* ------------------------------------------------------------------ /
@@ -139,6 +140,19 @@ export default function Index() {
                 </div>
             </section>
 
+            {/* ── Banner Image ──────────────────────────────────────────── */}
+            <section className="px-6 md:px-12 pb-16 md:pb-24">
+                <FadeIn className="max-w-4xl mx-auto">
+                    <div className="rounded-2xl overflow-hidden border border-primary/20 bg-background/50 shadow-2xl hover:border-primary/40 transition-colors">
+                        <img
+                            src="/wachaai-banner.jpg"
+                            alt="WachaAI Smart Digital Solutions for Africa"
+                            className="w-full h-auto object-cover block"
+                        />
+                    </div>
+                </FadeIn>
+            </section>
+
             {/* ── Feature: DingsJuice ───────────────────────────────────── */}
             <section className="px-6 md:px-12 pb-16 md:pb-24">
                 <FadeIn className="max-w-4xl mx-auto">
@@ -247,6 +261,54 @@ export default function Index() {
                                     </a>
                                 </FadeIn>
                             ))}
+                </div>
+            </section>
+
+            {/* ── Certifications ────────────────────────────────────────── */}
+            <section
+                id="certifications"
+                className="px-6 md:px-12 py-8 md:py-16 max-w-4xl mx-auto"
+            >
+                <FadeIn>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Qualifications</h2>
+                    <p className="text-sm md:text-base text-muted-foreground mb-12 max-w-lg">
+                        Verified Google Professional Certifications from Coursera backing our AI engineering expertise.
+                    </p>
+                </FadeIn>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <FadeIn delay={0.1} className="h-full">
+                        <a
+                            href="/Coursera%201RABKK3ZU20D.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block group rounded-xl border border-border bg-card p-6 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(56,189,248,0.07)] h-full"
+                        >
+                            <Award className="w-8 h-8 text-primary mb-4" />
+                            <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                                Analyze Images with Google Vision API
+                            </h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                Google Coursera Certificate • 1RABKK3ZU20D
+                            </p>
+                        </a>
+                    </FadeIn>
+                    <FadeIn delay={0.2} className="h-full">
+                        <a
+                            href="/Coursera%20ICD0JHFFB04X.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block group rounded-xl border border-border bg-card p-6 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(56,189,248,0.07)] h-full"
+                        >
+                            <Award className="w-8 h-8 text-primary mb-4" />
+                            <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                                Build AI Apps with Gemini in Android Studio
+                            </h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                Google Coursera Certificate • ICD0JHFFB04X
+                            </p>
+                        </a>
+                    </FadeIn>
                 </div>
             </section>
 
