@@ -112,20 +112,16 @@ export default function Index() {
             />
             {/* ── Hero ──────────────────────────────────────────────────── */}
             <section className="relative overflow-hidden">
-                {/* Ambient glow layers */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_oklch(0.25_0.08_230)_0%,_transparent_70%)] opacity-40" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_oklch(0.2_0.06_260)_0%,_transparent_60%)] opacity-30" />
-
-                <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 py-28 md:py-44 text-center">
+                <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 pt-20 pb-20 md:pt-28 md:pb-24 text-center">
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.08] text-balance"
+                        className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] text-balance"
                     >
                         Building AI Ventures
                         <br className="hidden sm:block" />
-                        <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+                        <span className="text-primary">
                             {" "}
                             From Uganda
                         </span>
@@ -135,7 +131,7 @@ export default function Index() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                        className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+                        className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
                     >
                         Practical AI tools, digital ventures, and real-world platforms built
                         in Kampala.
@@ -144,20 +140,20 @@ export default function Index() {
             </section>
 
             {/* ── Feature: DingsJuice ───────────────────────────────────── */}
-            <section className="px-6 md:px-12 pb-24">
-                <FadeIn className="max-w-3xl mx-auto">
-                    <div className="relative rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-background p-8 md:p-12 overflow-hidden">
+            <section className="px-6 md:px-12 pb-16 md:pb-24">
+                <FadeIn className="max-w-4xl mx-auto">
+                    <div className="relative rounded-2xl border border-primary/20 bg-background/50 p-8 md:p-12 overflow-hidden">
                         {/* Decorative glow */}
-                        <div className="absolute -top-24 -right-24 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                         <div className="relative z-10">
-                            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                                 Featured
                             </span>
-                            <h2 className="mt-3 text-3xl md:text-4xl font-bold">
+                            <h2 className="mt-4 text-2xl md:text-3xl font-bold">
                                 DingsJuice
                             </h2>
-                            <p className="mt-4 text-muted-foreground text-lg leading-relaxed max-w-xl">
+                            <p className="mt-4 text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl">
                                 A premium vitality drink made from fresh sugarcane. Natural
                                 energy with modern branding.
                             </p>
@@ -165,10 +161,10 @@ export default function Index() {
                                 href="https://dingsjuice.wachaai.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 mt-6 text-primary hover:brightness-125 font-medium transition-all group"
+                                className="inline-flex items-center gap-1.5 mt-6 text-sm text-primary hover:brightness-125 font-bold transition-all group"
                             >
                                 Visit Project
-                                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                             </a>
                         </div>
                     </div>
@@ -176,10 +172,10 @@ export default function Index() {
             </section>
 
             {/* ── Products ──────────────────────────────────────────────── */}
-            <section id="products" className="px-6 md:px-12 py-24 max-w-6xl mx-auto">
+            <section id="products" className="px-6 md:px-12 py-16 md:py-24 max-w-4xl mx-auto">
                 <FadeIn>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-3">Products</h2>
-                    <p className="text-muted-foreground mb-14 max-w-lg">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Products</h2>
+                    <p className="text-sm md:text-base text-muted-foreground mb-12 max-w-lg">
                         Digital platforms and tools solving real problems across Africa.
                     </p>
                 </FadeIn>
@@ -207,16 +203,16 @@ export default function Index() {
             {/* ── Open Source ────────────────────────────────────────────── */}
             <section
                 id="opensource"
-                className="px-6 md:px-12 py-24 max-w-6xl mx-auto"
+                className="px-6 md:px-12 py-8 md:py-16 max-w-4xl mx-auto"
             >
                 <FadeIn>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-3">Open Source</h2>
-                    <p className="text-muted-foreground mb-14 max-w-lg">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Open Source</h2>
+                    <p className="text-sm md:text-base text-muted-foreground mb-12 max-w-lg">
                         Contributing to the developer community, one repo at a time.
                     </p>
                 </FadeIn>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {loadingRepos
                         ? Array.from({ length: 6 }).map((_, i) => (
                             <Skeleton key={i} className="h-40 rounded-xl" />
@@ -255,10 +251,10 @@ export default function Index() {
             </section>
 
             {/* ── About ─────────────────────────────────────────────────── */}
-            <section id="about" className="px-6 md:px-12 py-24 max-w-3xl mx-auto">
+            <section id="about" className="px-6 md:px-12 py-16 md:py-24 max-w-4xl mx-auto">
                 <FadeIn>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">About</h2>
-                    <p className="text-muted-foreground text-lg leading-relaxed">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">About</h2>
+                    <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
                         WachaAI is a venture studio creating AI software, digital platforms,
                         and real-world ventures from Kampala, Uganda. We believe in building
                         practical technology that solves problems for people across Africa
@@ -269,7 +265,7 @@ export default function Index() {
 
             {/* ── Footer ────────────────────────────────────────────────── */}
             <footer className="border-t border-border px-6 md:px-12 py-12">
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-2xl font-bold">
                         Wacha<span className="text-primary">AI</span>
                     </div>
