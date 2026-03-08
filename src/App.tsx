@@ -50,7 +50,7 @@ const PRODUCTS: { name: string; description: string; icon: ElementType }[] = [
         icon: Cpu,
     },
 ];
-const NAV_LINKS = ["Products", "Open Source", "About"];
+
 /* ------------------------------------------------------------------ /
 / Shared animation wrapper /
 / ------------------------------------------------------------------ */
@@ -110,25 +110,6 @@ export default function Index() {
                         "linear-gradient(to right, #000 0%, #000 16.66%, #FCDC04 16.66%, #FCDC04 33.33%, #D90000 33.33%, #D90000 50%, #000 50%, #000 66.66%, #FCDC04 66.66%, #FCDC04 83.33%, #D90000 83.33%, #D90000 100%)",
                 }}
             />
-            {/* ── Navbar ────────────────────────────────────────────────── */}
-            <nav className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 backdrop-blur-md bg-background/80 border-b border-border">
-                <a href="#" className="text-2xl font-bold tracking-tight">
-                    Wacha<span className="text-primary">AI</span>
-                </a>
-
-                <div className="hidden md:flex items-center gap-8">
-                    {NAV_LINKS.map((label) => (
-                        <a
-                            key={label}
-                            href={`#${label.toLowerCase().replace(" ", "")}`}
-                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            {label}
-                        </a>
-                    ))}
-                </div>
-            </nav>
-
             {/* ── Hero ──────────────────────────────────────────────────── */}
             <section className="relative overflow-hidden">
                 {/* Ambient glow layers */}
