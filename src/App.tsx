@@ -397,7 +397,7 @@ function CTASection() {
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <a
-                                href="mailto:pwacha12@gmail.com"
+                                href="mailto:wachaexperience@gmail.com"
                                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:brightness-110 transition-all hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] hover:-translate-y-0.5"
                             >
                                 <Mail className="w-4 h-4" />
@@ -938,7 +938,7 @@ export default function Index() {
                                     <Github className="w-4 h-4" /> GitHub
                                 </a>
                                 <a
-                                    href="mailto:pwacha12@gmail.com"
+                                    href="mailto:wachaexperience@gmail.com"
                                     className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     <Mail className="w-4 h-4" /> Email
