@@ -1,0 +1,53 @@
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import authRoutes from "./routes/auth.js";
+import songRoutes from "./routes/songs.js";
+import orderRoutes from "./routes/orders.js";
+import commissionRoutes from "./routes/commissions.js";
+import downloadRoutes from "./routes/downloads.js";
+import paymentRoutes from "./routes/payments.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+const PORT = parseInt(process.env.PORT ?? "3001");
+
+/* ── Middleware ───────────────────────────────────────────────────── */
+app.use(cors({
+    origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
+    credentials: true,
+}));
+app.use(express.json());
+
+// Serve cover art publicly
+app.use(
+    "/uploads/covers",
+    express.static(path.join(__dirname, "..", "uploads", "covers"))
+);
+
+/* ── Routes ──────────────────────────────────────────────────────── */
+app.use("/api/auth", authRoutes);
+app.use("/api/songs", songRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/commissions", commissionRoutes);
+app.use("/api/downloads", downloadRoutes);
+app.use("/api/payments", paymentRoutes);
+
+/* ── Health check ────────────────────────────────────────────────── */
+app.get("/api/health", (_req, res) => {
+    res.json({
+        status: "ok",
+        time: new Date().toISOString(),
+        payment_mode: process.env.FLW_SECRET_KEY ? "automated" : "manual",
+    });
+});
+
+/* ── Start ────────────────────────────────────────────────────────── */
+app.listen(PORT, () => {
+    console.log(`\n  🎵 WachaAI Music API running on http://localhost:${PORT}`);
+    console.log(`  📦 Payment mode: ${process.env.FLW_SECRET_KEY ? "Flutterwave (automated)" : "Manual MoMo"}`);
+    console.log(`  💰 Recipient: ${process.env.PAYMENT_NETWORK} ${process.env.PAYMENT_PHONE} (${process.env.PAYMENT_NAME})\n`);
+});

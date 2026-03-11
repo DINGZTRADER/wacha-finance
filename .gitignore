@@ -14,6 +14,21 @@ dist-ssr
 build.log
 tsconfig.tsbuildinfo
 
+# Server
+server/.env
+server/uploads/songs/*
+server/uploads/covers/*
+server/uploads/previews/*
+server/data/*.db
+server/data/*.db-wal
+server/data/*.db-shm
+server/dist
+!server/uploads/**/.gitkeep
+!server/data/.gitkeep
+
+# Large media (commit only small assets)
+public/*.mp4
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

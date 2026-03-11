@@ -1,0 +1,51 @@
+import { Router } from "express";
+import db from "../db.js";
+
+const router = Router();
+const WEBHOOK_HASH = process.env.FLW_WEBHOOK_HASH;
+
+/**
+ * Flutterwave webhook handler.
+ * Receives payment confirmation and auto-approves orders/commissions.
+ */
+router.post("/webhook", (req, res) => {
+    // Verify webhook source
+    if (WEBHOOK_HASH && req.headers["verif-hash"] !== WEBHOOK_HASH) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+    }
+
+    const { event, data } = req.body;
+
+    if (event === "charge.completed" && data?.status === "successful") {
+        const txRef = data.tx_ref as string;
+
+        if (txRef.startsWith("COM-")) {
+            // Commission deposit payment
+            const commId = txRef.slice(4);
+            db.prepare(
+                `UPDATE commissions SET
+                    status = 'deposit_paid',
+                    payment_ref = ?,
+                    flw_ref = ?,
+                    paid_at = datetime('now')
+                 WHERE id = ?`
+            ).run(data.flw_ref, data.flw_ref, commId);
+        } else {
+            // Song purchase payment
+            db.prepare(
+                `UPDATE orders SET
+                    status = 'paid',
+                    payment_ref = ?,
+                    flw_ref = ?,
+                    paid_at = datetime('now')
+                 WHERE id = ?`
+            ).run(data.flw_ref, data.flw_ref, txRef);
+        }
+    }
+
+    // Always respond 200 to acknowledge receipt
+    res.json({ status: "ok" });
+});
+
+export default router;
