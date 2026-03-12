@@ -30,20 +30,21 @@ router.post("/", async (req, res) => {
         const fullAmount = 150_000;
         const depositAmount = pay_deposit ? 75_000 : 0; // 50% deposit
 
-        db.prepare(
+        await db.run(
             `INSERT INTO commissions (id, client_name, client_phone, client_email, description, genre, reference_links, amount, deposit_amount, payment_method)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        ).run(
-            id,
-            client_name,
-            client_phone,
-            client_email ?? null,
-            description,
-            genre ?? null,
-            reference_links ?? null,
-            fullAmount,
-            depositAmount,
-            payment_method ?? null
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+            [
+                id,
+                client_name,
+                client_phone,
+                client_email ?? null,
+                description,
+                genre ?? null,
+                reference_links ?? null,
+                fullAmount,
+                depositAmount,
+                payment_method ?? null
+            ]
         );
 
         // If paying deposit, initiate payment
@@ -63,10 +64,10 @@ router.post("/", async (req, res) => {
                 });
 
                 if (charge.data?.flw_ref) {
-                    db.prepare("UPDATE commissions SET flw_ref = ? WHERE id = ?").run(
+                    await db.run("UPDATE commissions SET flw_ref = $1 WHERE id = $2", [
                         charge.data.flw_ref,
                         id
-                    );
+                    ]);
                 }
 
                 res.status(201).json({
@@ -107,32 +108,31 @@ router.post("/", async (req, res) => {
 });
 
 /* ── Admin: list all commissions ─────────────────────────────────── */
-router.get("/", requireAuth as any, (_req, res) => {
-    const commissions = db
-        .prepare("SELECT * FROM commissions ORDER BY created_at DESC")
-        .all();
+router.get("/", requireAuth as any, async (_req, res) => {
+    const commissions = await db.all("SELECT * FROM commissions ORDER BY created_at DESC");
     res.json(commissions);
 });
 
 /* ── Admin: update commission status ─────────────────────────────── */
-router.patch("/:id", requireAuth as any, (req, res) => {
+router.patch("/:id", requireAuth as any, async (req, res) => {
     const { status, admin_notes, payment_ref } = req.body;
-    const existing = db.prepare("SELECT * FROM commissions WHERE id = ?").get(req.params.id);
+    const existing = await db.get("SELECT * FROM commissions WHERE id = $1", [req.params.id]);
     if (!existing) {
         res.status(404).json({ error: "Commission not found" });
         return;
     }
 
-    db.prepare(
+    await db.run(
         `UPDATE commissions SET
-            status = COALESCE(?, status),
-            admin_notes = COALESCE(?, admin_notes),
-            payment_ref = COALESCE(?, payment_ref),
-            paid_at = CASE WHEN ? IN ('deposit_paid', 'fully_paid') THEN datetime('now') ELSE paid_at END
-         WHERE id = ?`
-    ).run(status, admin_notes, payment_ref, status, req.params.id);
+            status = COALESCE($1, status),
+            admin_notes = COALESCE($2, admin_notes),
+            payment_ref = COALESCE($3, payment_ref),
+            paid_at = CASE WHEN $4 IN ('deposit_paid', 'fully_paid') THEN CURRENT_TIMESTAMP ELSE paid_at END
+         WHERE id = $5`,
+        [status, admin_notes, payment_ref, status, req.params.id]
+    );
 
-    const commission = db.prepare("SELECT * FROM commissions WHERE id = ?").get(req.params.id);
+    const commission = await db.get("SELECT * FROM commissions WHERE id = $1", [req.params.id]);
     res.json(commission);
 });
 

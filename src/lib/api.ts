@@ -138,10 +138,11 @@ export const api = {
     getSong: (id: string) => request<Song>(`/songs/${id}`),
     getPreviewUrl: (id: string) =>
         `${API_BASE}/songs/${id}/preview`,
-    getCoverUrl: (coverArt: string | null) =>
-        coverArt
-            ? `${API_BASE.replace("/api", "")}/uploads/covers/${coverArt}`
-            : null,
+    getCoverUrl: (coverArt: string | null) => {
+        if (!coverArt) return null;
+        if (coverArt.startsWith("http")) return coverArt;
+        return `${API_BASE.replace("/api", "")}/uploads/covers/${coverArt}`;
+    },
 
     /* Songs (Admin) */
     getAllSongs: (token: string) =>

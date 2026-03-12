@@ -8,7 +8,7 @@ const WEBHOOK_HASH = process.env.FLW_WEBHOOK_HASH;
  * Flutterwave webhook handler.
  * Receives payment confirmation and auto-approves orders/commissions.
  */
-router.post("/webhook", (req, res) => {
+router.post("/webhook", async (req, res) => {
     // Verify webhook source
     if (WEBHOOK_HASH && req.headers["verif-hash"] !== WEBHOOK_HASH) {
         res.status(401).json({ error: "Unauthorized" });
@@ -23,24 +23,26 @@ router.post("/webhook", (req, res) => {
         if (txRef.startsWith("COM-")) {
             // Commission deposit payment
             const commId = txRef.slice(4);
-            db.prepare(
+            await db.run(
                 `UPDATE commissions SET
                     status = 'deposit_paid',
-                    payment_ref = ?,
-                    flw_ref = ?,
-                    paid_at = datetime('now')
-                 WHERE id = ?`
-            ).run(data.flw_ref, data.flw_ref, commId);
+                    payment_ref = $1,
+                    flw_ref = $2,
+                    paid_at = CURRENT_TIMESTAMP
+                 WHERE id = $3`,
+                [data.flw_ref, data.flw_ref, commId]
+            );
         } else {
             // Song purchase payment
-            db.prepare(
+            await db.run(
                 `UPDATE orders SET
                     status = 'paid',
-                    payment_ref = ?,
-                    flw_ref = ?,
-                    paid_at = datetime('now')
-                 WHERE id = ?`
-            ).run(data.flw_ref, data.flw_ref, txRef);
+                    payment_ref = $1,
+                    flw_ref = $2,
+                    paid_at = CURRENT_TIMESTAMP
+                 WHERE id = $3`,
+                [data.flw_ref, data.flw_ref, txRef]
+            );
         }
     }
 

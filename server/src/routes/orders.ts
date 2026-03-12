@@ -13,9 +13,7 @@ router.post("/", async (req, res) => {
         const { song_id, customer_name, customer_phone, customer_email, payment_method } = req.body;
 
         // Validate song exists
-        const song = db
-            .prepare("SELECT * FROM songs WHERE id = ? AND is_active = 1")
-            .get(song_id) as any;
+        const song = await db.get("SELECT * FROM songs WHERE id = $1 AND is_active = 1", [song_id]) as any;
         if (!song) {
             res.status(404).json({ error: "Song not found" });
             return;
@@ -24,10 +22,11 @@ router.post("/", async (req, res) => {
         const id = uuid();
         const downloadToken = uuid();
 
-        db.prepare(
+        await db.run(
             `INSERT INTO orders (id, song_id, customer_name, customer_phone, customer_email, amount, payment_method, download_token)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-        ).run(id, song_id, customer_name, customer_phone, customer_email ?? null, song.price, payment_method ?? "mtn_momo", downloadToken);
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [id, song_id, customer_name, customer_phone, customer_email ?? null, song.price, payment_method ?? "mtn_momo", downloadToken]
+        );
 
         // Try automated payment via Flutterwave
         if (isFlutterwaveConfigured() && payment_method) {
@@ -45,7 +44,7 @@ router.post("/", async (req, res) => {
             });
 
             if (charge.data?.flw_ref) {
-                db.prepare("UPDATE orders SET flw_ref = ? WHERE id = ?").run(charge.data.flw_ref, id);
+                await db.run("UPDATE orders SET flw_ref = $1 WHERE id = $2", [charge.data.flw_ref, id]);
             }
 
             res.status(201).json({
@@ -77,31 +76,30 @@ router.post("/", async (req, res) => {
 });
 
 /* ── Admin: list all orders ──────────────────────────────────────── */
-router.get("/", requireAuth as any, (_req, res) => {
-    const orders = db
-        .prepare(
-            `SELECT o.*, s.title as song_title, s.artist as song_artist
-             FROM orders o JOIN songs s ON o.song_id = s.id
-             ORDER BY o.created_at DESC`
-        )
-        .all();
+router.get("/", requireAuth as any, async (_req, res) => {
+    const orders = await db.all(
+        `SELECT o.*, s.title as song_title, s.artist as song_artist
+         FROM orders o JOIN songs s ON o.song_id = s.id
+         ORDER BY o.created_at DESC`
+    );
     res.json(orders);
 });
 
 /* ── Admin: approve order (manual verification) ──────────────────── */
-router.patch("/:id/approve", requireAuth as any, (req, res) => {
+router.patch("/:id/approve", requireAuth as any, async (req, res) => {
     const { payment_ref } = req.body;
-    const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(req.params.id) as any;
+    const order = await db.get("SELECT * FROM orders WHERE id = $1", [req.params.id]) as any;
     if (!order) {
         res.status(404).json({ error: "Order not found" });
         return;
     }
 
-    db.prepare(
-        `UPDATE orders SET status = 'paid', payment_ref = ?, paid_at = datetime('now') WHERE id = ?`
-    ).run(payment_ref ?? "manual-verified", req.params.id);
+    await db.run(
+        `UPDATE orders SET status = 'paid', payment_ref = $1, paid_at = CURRENT_TIMESTAMP WHERE id = $2`,
+        [payment_ref ?? "manual-verified", req.params.id]
+    );
 
-    const updated = db.prepare("SELECT * FROM orders WHERE id = ?").get(req.params.id);
+    const updated = await db.get("SELECT * FROM orders WHERE id = $1", [req.params.id]);
     res.json({
         ...updated as any,
         download_url: `${FRONTEND_URL}/download/${order.download_token}`,
@@ -109,8 +107,8 @@ router.patch("/:id/approve", requireAuth as any, (req, res) => {
 });
 
 /* ── Admin: reject order ─────────────────────────────────────────── */
-router.patch("/:id/reject", requireAuth as any, (req, res) => {
-    db.prepare("UPDATE orders SET status = 'rejected' WHERE id = ?").run(req.params.id);
+router.patch("/:id/reject", requireAuth as any, async (req, res) => {
+    await db.run("UPDATE orders SET status = 'rejected' WHERE id = $1", [req.params.id]);
     res.json({ success: true });
 });
 

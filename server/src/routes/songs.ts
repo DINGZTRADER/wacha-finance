@@ -1,202 +1,157 @@
 import { Router } from "express";
-import multer from "multer";
-import path from "node:path";
-import fs from "node:fs";
-import { fileURLToPath } from "node:url";
 import { v4 as uuid } from "uuid";
-import db from "../db.js";
-import { requireAuth } from "../middleware/auth.js";
-import type { AuthRequest } from "../middleware/auth.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOAD_DIR = path.join(__dirname, "..", "..", "uploads");
-
-// Ensure upload dirs
-fs.mkdirSync(path.join(UPLOAD_DIR, "songs"), { recursive: true });
-fs.mkdirSync(path.join(UPLOAD_DIR, "covers"), { recursive: true });
-fs.mkdirSync(path.join(UPLOAD_DIR, "previews"), { recursive: true });
-
-const storage = multer.diskStorage({
-    destination: (_req, file, cb) => {
-        if (file.fieldname === "audio") cb(null, path.join(UPLOAD_DIR, "songs"));
-        else if (file.fieldname === "cover") cb(null, path.join(UPLOAD_DIR, "covers"));
-        else if (file.fieldname === "preview") cb(null, path.join(UPLOAD_DIR, "previews"));
-        else cb(null, UPLOAD_DIR);
-    },
-    filename: (_req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${uuid()}${ext}`);
-    },
-});
-
-const upload = multer({
-    storage,
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
-    fileFilter: (_req, file, cb) => {
-        if (file.fieldname === "audio" && !file.mimetype.startsWith("audio/")) {
-            cb(new Error("Only audio files allowed"));
-            return;
-        }
-        if (file.fieldname === "cover" && !file.mimetype.startsWith("image/")) {
-            cb(new Error("Only image files allowed"));
-            return;
-        }
-        cb(null, true);
-    },
-});
+import { put } from "@vercel/blob";
+import { db } from "../db.js";
+import { requireAuth, type AuthRequest } from "../middleware/auth.js";
+import fileUpload from "express-fileupload";
 
 const router = Router();
 
+// Middleware for file uploads
+router.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+    abortOnLimit: true,
+}));
+
 /* ── Public: list active songs ───────────────────────────────────── */
-router.get("/", (_req, res) => {
-    const songs = db
-        .prepare(
+router.get("/", async (_req, res) => {
+    try {
+        const songs = await db.all(
             `SELECT id, title, artist, genre, price, cover_art, duration, created_at
              FROM songs WHERE is_active = 1 ORDER BY created_at DESC`
-        )
-        .all();
-    res.json(songs);
-});
-
-/* ── Public: get single song ─────────────────────────────────────── */
-router.get("/:id", (req, res) => {
-    const song = db
-        .prepare(
-            `SELECT id, title, artist, genre, price, cover_art, duration, created_at
-             FROM songs WHERE id = ? AND is_active = 1`
-        )
-        .get(req.params.id);
-    if (!song) {
-        res.status(404).json({ error: "Song not found" });
-        return;
+        );
+        res.json(songs);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch songs" });
     }
-    res.json(song);
 });
 
 /* ── Public: stream preview audio ────────────────────────────────── */
-router.get("/:id/preview", (req, res) => {
-    const song = db
-        .prepare("SELECT preview_path, file_path FROM songs WHERE id = ? AND is_active = 1")
-        .get(req.params.id) as { preview_path: string | null; file_path: string } | undefined;
+router.get("/:id/preview", async (req, res) => {
+    try {
+        const song = await db.get("SELECT preview_path, file_path FROM songs WHERE id = $1 AND is_active = 1", [req.params.id]) as any;
+        if (!song) {
+            res.status(404).json({ error: "Song not found" });
+            return;
+        }
 
-    if (!song) {
-        res.status(404).json({ error: "Song not found" });
-        return;
-    }
+        const audioUrl = song.preview_path || song.file_path;
+        if (!audioUrl) {
+            res.status(404).json({ error: "Audio not found" });
+            return;
+        }
 
-    const previewFile = song.preview_path
-        ? path.join(UPLOAD_DIR, "previews", song.preview_path)
-        : path.join(UPLOAD_DIR, "songs", song.file_path);
-
-    if (!fs.existsSync(previewFile)) {
-        res.status(404).json({ error: "Audio not found" });
-        return;
-    }
-
-    const ext = path.extname(previewFile).toLowerCase();
-    const mimeTypes: Record<string, string> = {
-        ".mp3": "audio/mpeg",
-        ".wav": "audio/wav",
-        ".ogg": "audio/ogg",
-        ".flac": "audio/flac",
-        ".m4a": "audio/mp4",
-    };
-    const contentType = mimeTypes[ext] || "audio/mpeg";
-
-    const stat = fs.statSync(previewFile);
-    const range = req.headers.range;
-
-    if (range) {
-        const parts = range.replace(/bytes=/, "").split("-");
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
-        res.writeHead(206, {
-            "Content-Range": `bytes ${start}-${end}/${stat.size}`,
-            "Accept-Ranges": "bytes",
-            "Content-Length": end - start + 1,
-            "Content-Type": contentType,
-        });
-        fs.createReadStream(previewFile, { start, end }).pipe(res);
-    } else {
-        res.writeHead(200, {
-            "Content-Length": stat.size,
-            "Content-Type": contentType,
-        });
-        fs.createReadStream(previewFile).pipe(res);
+        // In production (Vercel), we redirect to the Blob URL or proxy it
+        // For simplicity and speed, we redirect
+        res.redirect(audioUrl);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to load preview" });
     }
 });
 
-/* ── Admin: upload new song ──────────────────────────────────────── */
-router.post(
-    "/",
-    requireAuth as any,
-    upload.fields([
-        { name: "audio", maxCount: 1 },
-        { name: "cover", maxCount: 1 },
-        { name: "preview", maxCount: 1 },
-    ]),
-    (req: AuthRequest, res) => {
-        const files = req.files as Record<string, Express.Multer.File[]>;
-        if (!files?.audio?.[0]) {
+/* ── Admin: upload new song (Production) ─────────────────────────── */
+router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
+    try {
+        if (!req.files || !req.files.audio) {
             res.status(400).json({ error: "Audio file required" });
             return;
         }
 
+        const audioFile = Array.isArray(req.files.audio) ? req.files.audio[0] : req.files.audio;
+        const coverFile = req.files.cover ? (Array.isArray(req.files.cover) ? req.files.cover[0] : req.files.cover) : null;
+        const previewFile = req.files.preview ? (Array.isArray(req.files.preview) ? req.files.preview[0] : req.files.preview) : null;
+
         const id = uuid();
         const { title, artist, genre, price } = req.body;
 
-        db.prepare(
+        // 1. Upload Full Audio to Blob
+        const audioBlob = await put(`songs/${id}-${audioFile.name}`, audioFile.data, {
+            access: 'public',
+            contentType: audioFile.mimetype,
+        });
+
+        // 2. Upload Cover if exists
+        let coverUrl = null;
+        if (coverFile) {
+            const coverBlob = await put(`covers/${id}-${coverFile.name}`, coverFile.data, {
+                access: 'public',
+                contentType: coverFile.mimetype,
+            });
+            coverUrl = coverBlob.url;
+        }
+
+        // 3. Upload Preview if exists
+        let previewUrl = null;
+        if (previewFile) {
+            const previewBlob = await put(`previews/${id}-${previewFile.name}`, previewFile.data, {
+                access: 'public',
+                contentType: previewFile.mimetype,
+            });
+            previewUrl = previewBlob.url;
+        }
+
+        await db.run(
             `INSERT INTO songs (id, title, artist, genre, price, cover_art, file_path, preview_path)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-        ).run(
-            id,
-            title || "Untitled",
-            artist || "Peter Wacha",
-            genre || "Afrobeat",
-            parseInt(price) || 3000,
-            files.cover?.[0]?.filename ?? null,
-            files.audio[0].filename,
-            files.preview?.[0]?.filename ?? null
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [
+                id,
+                title || "Untitled",
+                artist || "Peter Wacha",
+                genre || "Afrobeat",
+                parseInt(price) || 3000,
+                coverUrl,
+                audioBlob.url,
+                previewUrl
+            ]
         );
 
-        const song = db.prepare("SELECT * FROM songs WHERE id = ?").get(id);
+        const song = await db.get("SELECT * FROM songs WHERE id = $1", [id]);
         res.status(201).json(song);
+    } catch (err) {
+        console.error("Upload error:", err);
+        res.status(500).json({ error: "Upload failed" });
     }
-);
+});
 
 /* ── Admin: update song ──────────────────────────────────────────── */
-router.patch("/:id", requireAuth as any, (req: AuthRequest, res) => {
+router.patch("/:id", requireAuth as any, async (req: AuthRequest, res) => {
     const { title, artist, genre, price, is_active } = req.body;
-    const existing = db.prepare("SELECT * FROM songs WHERE id = ?").get(req.params.id);
-    if (!existing) {
-        res.status(404).json({ error: "Song not found" });
-        return;
+    try {
+        await db.run(
+            `UPDATE songs SET
+                title = COALESCE($1, title),
+                artist = COALESCE($2, artist),
+                genre = COALESCE($3, genre),
+                price = COALESCE($4, price),
+                is_active = COALESCE($5, is_active)
+             WHERE id = $6`,
+            [title, artist, genre, price, is_active, req.params.id]
+        );
+        const song = await db.get("SELECT * FROM songs WHERE id = $1", [req.params.id]);
+        res.json(song);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to update song" });
     }
-
-    db.prepare(
-        `UPDATE songs SET
-            title = COALESCE(?, title),
-            artist = COALESCE(?, artist),
-            genre = COALESCE(?, genre),
-            price = COALESCE(?, price),
-            is_active = COALESCE(?, is_active)
-         WHERE id = ?`
-    ).run(title, artist, genre, price, is_active, req.params.id);
-
-    const song = db.prepare("SELECT * FROM songs WHERE id = ?").get(req.params.id);
-    res.json(song);
 });
 
 /* ── Admin: delete song ──────────────────────────────────────────── */
-router.delete("/:id", requireAuth as any, (req: AuthRequest, res) => {
-    db.prepare("UPDATE songs SET is_active = 0 WHERE id = ?").run(req.params.id);
-    res.json({ success: true });
+router.delete("/:id", requireAuth as any, async (req: AuthRequest, res) => {
+    try {
+        await db.run("UPDATE songs SET is_active = 0 WHERE id = $1", [req.params.id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to delete song" });
+    }
 });
 
-/* ── Admin: list all songs (including inactive) ──────────────────── */
-router.get("/admin/all", requireAuth as any, (_req, res) => {
-    const songs = db.prepare("SELECT * FROM songs ORDER BY created_at DESC").all();
-    res.json(songs);
+/* ── Admin: list all songs ───────────────────────────────────────── */
+router.get("/admin/all", requireAuth as any, async (_req, res) => {
+    try {
+        const songs = await db.all("SELECT * FROM songs ORDER BY created_at DESC");
+        res.json(songs);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch songs" });
+    }
 });
 
 export default router;

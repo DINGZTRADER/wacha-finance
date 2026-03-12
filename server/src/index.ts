@@ -11,14 +11,20 @@ import commissionRoutes from "./routes/commissions.js";
 import downloadRoutes from "./routes/downloads.js";
 import paymentRoutes from "./routes/payments.js";
 
+import { initDB } from "./db.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = parseInt(process.env.PORT ?? "3001");
+
+// Initialize DB
+initDB().catch(console.error);
 
 /* ── Middleware ───────────────────────────────────────────────────── */
 app.use(cors({
     origin: [
         process.env.FRONTEND_URL ?? "http://localhost:5173",
+        "http://localhost:5174",
         "https://wachaai.com",
         "https://www.wachaai.com"
     ],

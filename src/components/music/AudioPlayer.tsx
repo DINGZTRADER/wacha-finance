@@ -31,16 +31,23 @@ export default function AudioPlayer({ src, title, artist, onEnded }: Props) {
             onEnded?.();
         };
 
+        const onError = () => {
+            setLoading(false);
+            console.error(`Failed to load audio: ${src}`);
+        };
+
         audio.addEventListener("loadedmetadata", onLoaded);
         audio.addEventListener("timeupdate", onTime);
         audio.addEventListener("ended", onEnd);
+        audio.addEventListener("error", onError);
 
         return () => {
             audio.removeEventListener("loadedmetadata", onLoaded);
             audio.removeEventListener("timeupdate", onTime);
             audio.removeEventListener("ended", onEnd);
+            audio.removeEventListener("error", onError);
         };
-    }, [onEnded]);
+    }, [onEnded, src]);
 
     const toggle = useCallback(() => {
         const audio = audioRef.current;

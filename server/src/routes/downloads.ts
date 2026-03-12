@@ -14,14 +14,13 @@ const router = Router();
  * Only works with a valid download token from a paid order.
  * Limits downloads to 5 per token.
  */
-router.get("/:token", (req, res) => {
-    const order = db
-        .prepare(
-            `SELECT o.*, s.file_path, s.title, s.artist
-             FROM orders o JOIN songs s ON o.song_id = s.id
-             WHERE o.download_token = ?`
-        )
-        .get(req.params.token) as any;
+router.get("/:token", async (req, res) => {
+    const order = await db.get(
+        `SELECT o.*, s.file_path, s.title, s.artist
+         FROM orders o JOIN songs s ON o.song_id = s.id
+         WHERE o.download_token = $1`,
+        [req.params.token]
+    ) as any;
 
     if (!order) {
         res.status(404).json({ error: "Invalid download link" });
@@ -55,7 +54,7 @@ router.get("/:token", (req, res) => {
     }
 
     // Increment download count
-    db.prepare("UPDATE orders SET download_count = download_count + 1 WHERE id = ?").run(order.id);
+    await db.run("UPDATE orders SET download_count = download_count + 1 WHERE id = $1", [order.id]);
 
     // Sanitize filename
     const ext = path.extname(order.file_path);
@@ -76,14 +75,13 @@ router.get("/:token", (req, res) => {
 });
 
 /* ── Check download status (no auth required, uses token) ────────── */
-router.get("/:token/status", (req, res) => {
-    const order = db
-        .prepare(
-            `SELECT o.status, o.download_count, s.title, s.artist
-             FROM orders o JOIN songs s ON o.song_id = s.id
-             WHERE o.download_token = ?`
-        )
-        .get(req.params.token) as any;
+router.get("/:token/status", async (req, res) => {
+    const order = await db.get(
+        `SELECT o.status, o.download_count, s.title, s.artist
+         FROM orders o JOIN songs s ON o.song_id = s.id
+         WHERE o.download_token = $1`,
+        [req.params.token]
+    ) as any;
 
     if (!order) {
         res.status(404).json({ error: "Invalid link" });
