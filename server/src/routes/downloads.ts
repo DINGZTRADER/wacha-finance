@@ -58,10 +58,20 @@ router.get("/:token", (req, res) => {
     db.prepare("UPDATE orders SET download_count = download_count + 1 WHERE id = ?").run(order.id);
 
     // Sanitize filename
-    const safeName = `${order.artist} - ${order.title}`.replace(/[^a-zA-Z0-9\s\-_.]/g, "") + path.extname(order.file_path);
+    const ext = path.extname(order.file_path);
+    const safeName = `${order.artist} - ${order.title}`.replace(/[^a-zA-Z0-9\s\-_.]/g, "") + ext;
+
+    const mimes: Record<string, string> = {
+        ".mp3": "audio/mpeg",
+        ".wav": "audio/wav",
+        ".ogg": "audio/ogg",
+        ".flac": "audio/flac",
+        ".m4a": "audio/mp4",
+    };
+    const contentType = mimes[ext.toLowerCase()] || "audio/mpeg";
 
     res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
-    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Type", contentType);
     fs.createReadStream(filePath).pipe(res);
 });
 

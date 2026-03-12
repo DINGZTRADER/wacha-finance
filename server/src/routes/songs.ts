@@ -93,6 +93,16 @@ router.get("/:id/preview", (req, res) => {
         return;
     }
 
+    const ext = path.extname(previewFile).toLowerCase();
+    const mimeTypes: Record<string, string> = {
+        ".mp3": "audio/mpeg",
+        ".wav": "audio/wav",
+        ".ogg": "audio/ogg",
+        ".flac": "audio/flac",
+        ".m4a": "audio/mp4",
+    };
+    const contentType = mimeTypes[ext] || "audio/mpeg";
+
     const stat = fs.statSync(previewFile);
     const range = req.headers.range;
 
@@ -104,13 +114,13 @@ router.get("/:id/preview", (req, res) => {
             "Content-Range": `bytes ${start}-${end}/${stat.size}`,
             "Accept-Ranges": "bytes",
             "Content-Length": end - start + 1,
-            "Content-Type": "audio/mpeg",
+            "Content-Type": contentType,
         });
         fs.createReadStream(previewFile, { start, end }).pipe(res);
     } else {
         res.writeHead(200, {
             "Content-Length": stat.size,
-            "Content-Type": "audio/mpeg",
+            "Content-Type": contentType,
         });
         fs.createReadStream(previewFile).pipe(res);
     }
