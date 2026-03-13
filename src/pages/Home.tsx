@@ -52,6 +52,7 @@ const NAV_LINKS = [
 
 const MUSIC_LINKS = [
     { label: "Music Store", href: "/store", icon: Music },
+    { label: "AI Lab", href: "/lab", icon: Sparkles },
     { label: "Commission", href: "/commission", icon: Mic2 },
 ] as const;
 

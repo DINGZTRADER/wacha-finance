@@ -5,6 +5,7 @@ const Home = lazy(() => import("@/pages/Home"));
 const Store = lazy(() => import("@/pages/Store"));
 const Commission = lazy(() => import("@/pages/Commission"));
 const Download = lazy(() => import("@/pages/Download"));
+const Lab = lazy(() => import("@/pages/Lab"));
 const Admin = lazy(() => import("@/pages/admin/index"));
 
 function Loader() {
@@ -22,6 +23,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/store" element={<Store />} />
+                    <Route path="/lab" element={<Lab />} />
                     <Route path="/commission" element={<Commission />} />
                     <Route path="/download/:token" element={<Download />} />
                     <Route path="/admin" element={<Admin />} />
