@@ -69,6 +69,20 @@ app.get("/api/health", async (_req, res) => {
     });
 });
 
+app.get("/api/debug-db", async (_req, res) => {
+    try {
+        const result = await db.query("SELECT COUNT(*) as count FROM songs");
+        const genres = await db.query("SELECT DISTINCT genre FROM songs");
+        res.json({
+            count: result.rows[0].count,
+            genres: genres.rows.map((r: any) => r.genre),
+            isPostgres: (await import("./db.js")).isPostgres
+        });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 /* ── Start ────────────────────────────────────────────────────────── */
 if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
     app.listen(PORT, () => {
