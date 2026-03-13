@@ -17,7 +17,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT ?? "3001");
 
 // Initialize DB
-initDB().catch(console.error);
+// Initialize DB
+if (process.env.POSTGRES_URL || process.env.DATABASE_URL || !process.env.VERCEL) {
+    initDB().catch(err => {
+        console.error("DB Init Error:", err.message);
+    });
+}
 
 /* ── Middleware ───────────────────────────────────────────────────── */
 export const app = express();
@@ -49,11 +54,12 @@ app.use("/api/payments", paymentRoutes);
 
 /* ── Health check ────────────────────────────────────────────────── */
 app.get("/api/health", async (_req, res) => {
-    const { isPostgres } = await import("./db.js");
+    const { isPostgres, connectionString } = await import("./db.js");
     res.json({
         status: "ok",
         time: new Date().toISOString(),
-        database: isPostgres ? "Postgres" : "SQLite",
+        database: isPostgres ? "Postgres" : "None/SQLite (Local Only)",
+        setup_required: !isPostgres && !!process.env.VERCEL,
         env: {
             has_postgres_url: !!process.env.POSTGRES_URL,
             has_database_url: !!process.env.DATABASE_URL,

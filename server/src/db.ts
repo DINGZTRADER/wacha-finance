@@ -15,6 +15,9 @@ let sqlite: any = null;
 
 async function getSqlite() {
     if (sqlite) return sqlite;
+    if (process.env.VERCEL) {
+        throw new Error("SQLite is not supported on Vercel. Please configure POSTGRES_URL.");
+    }
     // Dynamic import to avoid Vercel build errors with native modules
     const { default: Database } = await import("better-sqlite3");
     const DB_PATH = path.join(__dirname, "..", "data", "music.db");
@@ -47,6 +50,7 @@ export const db = {
             const { rows } = await pool.query(text, params);
             return rows[0];
         }
+        if (process.env.VERCEL) return null;
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).get(...(params || []));
     },
@@ -55,11 +59,13 @@ export const db = {
             const { rows } = await pool.query(text, params);
             return rows;
         }
+        if (process.env.VERCEL) return [];
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).all(...(params || []));
     },
     async run(text: string, params?: any[]) {
         if (isPostgres) return pool.query(text, params);
+        if (process.env.VERCEL) return;
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).run(...(params || []));
     }
@@ -134,6 +140,10 @@ export async function initDB() {
         `);
         console.log("🐘 Postgres database initialized.");
     } else {
+        if (process.env.VERCEL) {
+            console.warn("⚠️ POSTGRES_URL not found. Skipping SQLite init on Vercel.");
+            return;
+        }
         const s = await getSqlite();
         s.exec(`
             CREATE TABLE IF NOT EXISTS songs (
