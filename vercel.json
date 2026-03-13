@@ -1,7 +1,7 @@
 {
     "functions": {
         "api/index.ts": {
-            "runtime": "vercel-node@latest",
+            "runtime": "nodejs22.x",
             "includeFiles": "server/src/**"
         }
     },
