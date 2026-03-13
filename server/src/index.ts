@@ -48,10 +48,17 @@ app.use("/api/downloads", downloadRoutes);
 app.use("/api/payments", paymentRoutes);
 
 /* ── Health check ────────────────────────────────────────────────── */
-app.get("/api/health", (_req, res) => {
+app.get("/api/health", async (_req, res) => {
+    const { isPostgres } = await import("./db.js");
     res.json({
         status: "ok",
         time: new Date().toISOString(),
+        database: isPostgres ? "Postgres" : "SQLite",
+        env: {
+            has_postgres_url: !!process.env.POSTGRES_URL,
+            has_database_url: !!process.env.DATABASE_URL,
+            node_env: process.env.NODE_ENV
+        },
         payment_mode: process.env.FLW_SECRET_KEY ? "automated" : "manual",
     });
 });

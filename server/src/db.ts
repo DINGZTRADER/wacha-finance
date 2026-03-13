@@ -7,8 +7,8 @@ const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Use Vercel Postgres connection string if available
-const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
-const isPostgres = !!connectionString;
+export const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+export const isPostgres = !!connectionString;
 
 let pool: any = null;
 let sqlite: any = null;
