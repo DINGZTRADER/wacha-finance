@@ -1,10 +1,4 @@
 {
-    "functions": {
-        "api/index.ts": {
-            "runtime": "nodejs22.x",
-            "includeFiles": "server/src/**"
-        }
-    },
     "rewrites": [
         { "source": "/api/(.*)", "destination": "/api/index.ts" },
         { "source": "/((?!api|assets|uploads|public|.*\\..*$).*)", "destination": "/index.html" }
