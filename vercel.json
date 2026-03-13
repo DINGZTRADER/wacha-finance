@@ -1,5 +1,13 @@
 {
+    "functions": {
+        "api/index.ts": {
+            "runtime": "vercel-node@latest",
+            "includeFiles": "server/src/**"
+        }
+    },
     "rewrites": [
+        { "source": "/api/(.*)", "destination": "/api/index.ts" },
         { "source": "/((?!api|assets|uploads|public|.*\\..*$).*)", "destination": "/index.html" }
     ]
 }
+

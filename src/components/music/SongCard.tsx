@@ -55,12 +55,36 @@ export default function SongCard({ song, onBuy, index }: Props) {
                     <p className="text-sm text-muted-foreground">{song.artist}</p>
                 </div>
 
-                {/* Audio player */}
-                <AudioPlayer
-                    src={previewUrl}
-                    title={song.title}
-                    artist={song.artist}
-                />
+                {/* Suno Embed or Audio player */}
+                {song.suno_embed ? (
+                    <div className="rounded-xl overflow-hidden bg-black/20 border border-white/5 shadow-inner">
+                        {song.suno_embed.includes("<iframe") ? (
+                            <div 
+                                className="w-full h-[150px] overflow-hidden [&>iframe]:w-full [&>iframe]:h-full"
+                                dangerouslySetInnerHTML={{ 
+                                    __html: song.suno_embed 
+                                }} 
+                            />
+                        ) : (
+                            <iframe
+                                src={song.suno_embed.startsWith("http") ? song.suno_embed : `https://suno.com/embed/${song.suno_embed}`}
+                                width="100%"
+                                height="150"
+                                frameBorder="0"
+                                allow="autoplay; encrypted-media; fullscreen"
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                            />
+                        )}
+                    </div>
+                ) : (
+                    <AudioPlayer
+                        src={previewUrl}
+                        title={song.title}
+                        artist={song.artist}
+                    />
+                )}
 
                 {/* Price + Buy */}
                 <div className="flex items-center justify-between pt-1">

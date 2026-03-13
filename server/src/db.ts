@@ -75,9 +75,10 @@ export async function initDB() {
                 genre       TEXT NOT NULL DEFAULT 'Afrobeat',
                 price       INTEGER NOT NULL DEFAULT 3000,
                 cover_art   TEXT,
-                file_path   TEXT NOT NULL,
+                file_path   TEXT,
                 preview_path TEXT,
                 duration    INTEGER DEFAULT 0,
+                suno_embed  TEXT,
                 created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 is_active   INTEGER NOT NULL DEFAULT 1
             );
@@ -122,9 +123,75 @@ export async function initDB() {
             CREATE INDEX IF NOT EXISTS idx_orders_download_token ON orders(download_token);
             CREATE INDEX IF NOT EXISTS idx_commissions_status ON commissions(status);
             CREATE INDEX IF NOT EXISTS idx_songs_active ON songs(is_active);
+
+            -- Ensure suno_embed column exists
+            DO $$ 
+            BEGIN 
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='songs' AND column_name='suno_embed') THEN
+                    ALTER TABLE songs ADD COLUMN suno_embed TEXT;
+                END IF;
+            END $$;
         `);
         console.log("🐘 Postgres database initialized.");
     } else {
+        const s = await getSqlite();
+        s.exec(`
+            CREATE TABLE IF NOT EXISTS songs (
+                id          TEXT PRIMARY KEY,
+                title       TEXT NOT NULL,
+                artist      TEXT NOT NULL DEFAULT 'Peter Wacha',
+                genre       TEXT NOT NULL DEFAULT 'Afrobeat',
+                price       INTEGER NOT NULL DEFAULT 3000,
+                cover_art   TEXT,
+                file_path   TEXT,
+                preview_path TEXT,
+                duration    INTEGER DEFAULT 0,
+                suno_embed  TEXT,
+                created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                is_active   INTEGER NOT NULL DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS orders (
+                id              TEXT PRIMARY KEY,
+                song_id         TEXT NOT NULL REFERENCES songs(id),
+                customer_name   TEXT NOT NULL,
+                customer_phone  TEXT NOT NULL,
+                customer_email  TEXT,
+                amount          INTEGER NOT NULL,
+                payment_method  TEXT NOT NULL DEFAULT 'mtn_momo',
+                payment_ref     TEXT,
+                flw_ref         TEXT,
+                status          TEXT NOT NULL DEFAULT 'pending',
+                download_token  TEXT,
+                download_count  INTEGER NOT NULL DEFAULT 0,
+                created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                paid_at         TIMESTAMP WITH TIME ZONE
+            );
+
+            CREATE TABLE IF NOT EXISTS commissions (
+                id              TEXT PRIMARY KEY,
+                client_name     TEXT NOT NULL,
+                client_phone    TEXT NOT NULL,
+                client_email    TEXT,
+                description     TEXT NOT NULL,
+                genre           TEXT,
+                reference_links TEXT,
+                amount          INTEGER NOT NULL DEFAULT 150000,
+                deposit_amount  INTEGER NOT NULL DEFAULT 0,
+                payment_method  TEXT,
+                payment_ref     TEXT,
+                flw_ref         TEXT,
+                status          TEXT NOT NULL DEFAULT 'new',
+                admin_notes     TEXT,
+                created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                paid_at         TIMESTAMP WITH TIME ZONE
+            );
+        `);
+        // Check if column exists in SQLite
+        const info = s.prepare("PRAGMA table_info(songs)").all();
+        if (!info.some((c: any) => c.name === "suno_embed")) {
+            s.exec("ALTER TABLE songs ADD COLUMN suno_embed TEXT");
+        }
         console.log("📁 SQLite database ready.");
     }
 }

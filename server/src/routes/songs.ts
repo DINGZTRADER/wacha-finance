@@ -23,7 +23,7 @@ router.use(fileUpload({
 router.get("/", async (_req, res) => {
     try {
         const songs = await db.all(
-            `SELECT id, title, artist, genre, price, cover_art, duration, created_at
+            `SELECT id, title, artist, genre, price, cover_art, duration, suno_embed, created_at
              FROM songs WHERE is_active = 1 ORDER BY created_at DESC`
         );
         res.json(songs);
@@ -102,17 +102,18 @@ router.get("/:id/preview", async (req, res) => {
 /* ── Admin: upload new song (Hybrid) ────────────────────────────── */
 router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
     try {
-        if (!req.files || !req.files.audio) {
-            res.status(400).json({ error: "Audio file required" });
+        const { title, artist, genre, price, suno_embed } = req.body;
+
+        if (!suno_embed && (!req.files || !req.files.audio)) {
+            res.status(400).json({ error: "Audio file or Suno embed required" });
             return;
         }
 
-        const audioFile = Array.isArray(req.files.audio) ? req.files.audio[0] : req.files.audio;
-        const coverFile = req.files.cover ? (Array.isArray(req.files.cover) ? req.files.cover[0] : req.files.cover) : null;
-        const previewFile = req.files.preview ? (Array.isArray(req.files.preview) ? req.files.preview[0] : req.files.preview) : null;
+        const audioFile = req.files?.audio ? (Array.isArray(req.files.audio) ? req.files.audio[0] : req.files.audio) : null;
+        const coverFile = req.files?.cover ? (Array.isArray(req.files.cover) ? req.files.cover[0] : req.files.cover) : null;
+        const previewFile = req.files?.preview ? (Array.isArray(req.files.preview) ? req.files.preview[0] : req.files.preview) : null;
 
         const id = uuid();
-        const { title, artist, genre, price } = req.body;
 
         let finalAudioPath: string;
         let finalCoverPath: string | null = null;
@@ -123,11 +124,15 @@ router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
 
         if (hasBlob) {
             // Upload to Cloud
-            const audioBlob = await put(`songs/${id}-${audioFile.name}`, audioFile.data, {
-                access: 'public',
-                contentType: audioFile.mimetype,
-            });
-            finalAudioPath = audioBlob.url;
+            if (audioFile) {
+                const audioBlob = await put(`songs/${id}-${audioFile.name}`, audioFile.data, {
+                    access: 'public',
+                    contentType: audioFile.mimetype,
+                });
+                finalAudioPath = audioBlob.url;
+            } else {
+                finalAudioPath = "";
+            }
 
             if (coverFile) {
                 const coverBlob = await put(`covers/${id}-${coverFile.name}`, coverFile.data, {
@@ -146,9 +151,13 @@ router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
             }
         } else {
             // Save Locally
-            const ext = path.extname(audioFile.name);
-            finalAudioPath = `${id}${ext}`;
-            await audioFile.mv(path.join(UPLOAD_DIR, "songs", finalAudioPath));
+            if (audioFile) {
+                const ext = path.extname(audioFile.name);
+                finalAudioPath = `${id}${ext}`;
+                await audioFile.mv(path.join(UPLOAD_DIR, "songs", finalAudioPath));
+            } else {
+                finalAudioPath = "";
+            }
 
             if (coverFile) {
                 const cExt = path.extname(coverFile.name);
@@ -164,8 +173,8 @@ router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
         }
 
         await db.run(
-            `INSERT INTO songs (id, title, artist, genre, price, cover_art, file_path, preview_path)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            `INSERT INTO songs (id, title, artist, genre, price, cover_art, file_path, preview_path, suno_embed)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
             [
                 id,
                 title || "Untitled",
@@ -174,7 +183,8 @@ router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
                 parseInt(price) || 3000,
                 finalCoverPath,
                 finalAudioPath,
-                finalPreviewPath
+                finalPreviewPath,
+                suno_embed
             ]
         );
 
@@ -188,7 +198,7 @@ router.post("/", requireAuth as any, async (req: AuthRequest, res) => {
 
 /* ── Admin: update song ──────────────────────────────────────────── */
 router.patch("/:id", requireAuth as any, async (req: AuthRequest, res) => {
-    const { title, artist, genre, price, is_active } = req.body;
+    const { title, artist, genre, price, is_active, suno_embed } = req.body;
     try {
         await db.run(
             `UPDATE songs SET
@@ -196,9 +206,10 @@ router.patch("/:id", requireAuth as any, async (req: AuthRequest, res) => {
                 artist = COALESCE($2, artist),
                 genre = COALESCE($3, genre),
                 price = COALESCE($4, price),
-                is_active = COALESCE($5, is_active)
-             WHERE id = $6`,
-            [title, artist, genre, price, is_active, req.params.id]
+                is_active = COALESCE($5, is_active),
+                suno_embed = COALESCE($6, suno_embed)
+             WHERE id = $7`,
+            [title, artist, genre, price, is_active, suno_embed, req.params.id]
         );
         const song = await db.get("SELECT * FROM songs WHERE id = $1", [req.params.id]);
         res.json(song);

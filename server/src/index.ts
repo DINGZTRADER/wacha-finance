@@ -14,13 +14,14 @@ import paymentRoutes from "./routes/payments.js";
 import { initDB } from "./db.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const app = express();
 const PORT = parseInt(process.env.PORT ?? "3001");
 
 // Initialize DB
 initDB().catch(console.error);
 
 /* ── Middleware ───────────────────────────────────────────────────── */
+export const app = express();
+
 app.use(cors({
     origin: [
         process.env.FRONTEND_URL ?? "http://localhost:5173",
@@ -56,8 +57,13 @@ app.get("/api/health", (_req, res) => {
 });
 
 /* ── Start ────────────────────────────────────────────────────────── */
-app.listen(PORT, () => {
-    console.log(`\n  🎵 WachaAI Music API running on http://localhost:${PORT}`);
-    console.log(`  📦 Payment mode: ${process.env.FLW_SECRET_KEY ? "Flutterwave (automated)" : "Manual MoMo"}`);
-    console.log(`  💰 Recipient: ${process.env.PAYMENT_NETWORK} ${process.env.PAYMENT_PHONE} (${process.env.PAYMENT_NAME})\n`);
-});
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`\n  🎵 WachaAI Music API running on http://localhost:${PORT}`);
+        console.log(`  📦 Payment mode: ${process.env.FLW_SECRET_KEY ? "Flutterwave (automated)" : "Manual MoMo"}`);
+        console.log(`  💰 Recipient: ${process.env.PAYMENT_NETWORK} ${process.env.PAYMENT_PHONE} (${process.env.PAYMENT_NAME})\n`);
+    });
+}
+
+export default app;
+

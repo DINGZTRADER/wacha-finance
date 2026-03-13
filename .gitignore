@@ -39,3 +39,4 @@ public/*.mp4
 *.njsproj
 *.sln
 *.sw?
+.vercel

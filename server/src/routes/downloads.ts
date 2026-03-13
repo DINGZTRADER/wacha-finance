@@ -47,6 +47,18 @@ router.get("/:token", async (req, res) => {
         return;
     }
 
+    if (!order.file_path) {
+        res.status(404).json({ error: "No download file associated with this song" });
+        return;
+    }
+
+    // Handle cloud URLs
+    if (order.file_path.startsWith("http")) {
+        await db.run("UPDATE orders SET download_count = download_count + 1 WHERE id = $1", [order.id]);
+        res.redirect(order.file_path);
+        return;
+    }
+
     const filePath = path.join(UPLOAD_DIR, "songs", order.file_path);
     if (!fs.existsSync(filePath)) {
         res.status(404).json({ error: "File not found on server" });

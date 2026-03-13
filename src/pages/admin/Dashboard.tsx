@@ -34,6 +34,7 @@ export default function Dashboard({ token, onLogout }: Props) {
     const [uploadArtist, setUploadArtist] = useState("Peter Wacha");
     const [uploadGenre, setUploadGenre] = useState("Afrobeat");
     const [uploadPrice, setUploadPrice] = useState("3000");
+    const [uploadSunoEmbed, setUploadSunoEmbed] = useState("");
     const [uploadAudio, setUploadAudio] = useState<File | null>(null);
     const [uploadCover, setUploadCover] = useState<File | null>(null);
 
@@ -59,19 +60,21 @@ export default function Dashboard({ token, onLogout }: Props) {
     }, [token]);
 
     const handleUpload = async () => {
-        if (!uploadAudio || !uploadTitle.trim()) return;
+        if (!uploadTitle.trim() || (!uploadAudio && !uploadSunoEmbed.trim())) return;
         setUploading(true);
         const fd = new FormData();
-        fd.append("audio", uploadAudio);
+        if (uploadAudio) fd.append("audio", uploadAudio);
         if (uploadCover) fd.append("cover", uploadCover);
         fd.append("title", uploadTitle);
         fd.append("artist", uploadArtist);
         fd.append("genre", uploadGenre);
         fd.append("price", uploadPrice);
+        if (uploadSunoEmbed) fd.append("suno_embed", uploadSunoEmbed);
 
         try {
             await api.uploadSong(fd, token);
             setUploadTitle("");
+            setUploadSunoEmbed("");
             setUploadAudio(null);
             setUploadCover(null);
             refresh();
@@ -343,6 +346,15 @@ export default function Dashboard({ token, onLogout }: Props) {
                                             placeholder="Price (UGX)"
                                             className="px-3 py-2 rounded-lg bg-background border border-border text-sm focus:border-primary/50 focus:outline-none"
                                         />
+                                        <input
+                                            type="text"
+                                            value={uploadSunoEmbed}
+                                            onChange={(e) =>
+                                                setUploadSunoEmbed(e.target.value)
+                                            }
+                                            placeholder="Suno Embed (Iframe or URL)"
+                                            className="col-span-1 sm:col-span-2 px-3 py-2 rounded-lg bg-background border border-border text-sm focus:border-primary/50 focus:outline-none"
+                                        />
                                     </div>
                                     <div className="flex flex-col sm:flex-row gap-3">
                                         <label className="flex-1 cursor-pointer">
@@ -382,7 +394,7 @@ export default function Dashboard({ token, onLogout }: Props) {
                                         onClick={handleUpload}
                                         disabled={
                                             uploading ||
-                                            !uploadAudio ||
+                                            (!uploadAudio && !uploadSunoEmbed.trim()) ||
                                             !uploadTitle.trim()
                                         }
                                         className="px-5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 disabled:opacity-50 transition-all flex items-center gap-2"

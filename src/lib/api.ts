@@ -55,6 +55,7 @@ export type Song = {
     cover_art: string | null;
     duration: number;
     created_at: string;
+    suno_embed?: string | null;
     file_path?: string;
     preview_path?: string;
     is_active?: number;
