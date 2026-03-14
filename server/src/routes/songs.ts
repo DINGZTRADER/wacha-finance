@@ -23,7 +23,7 @@ router.use(fileUpload({
 router.get("/", async (_req, res) => {
     try {
         const songs = await db.all(
-            `SELECT id, title, artist, genre, price, cover_art, duration, suno_embed, created_at
+            `SELECT id, title, artist, genre, price, cover_art, duration, suno_embed, file_path, preview_path, created_at
              FROM songs WHERE is_active = 1 ORDER BY created_at DESC`
         );
         res.json(songs);

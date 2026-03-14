@@ -11,7 +11,7 @@ import commissionRoutes from "./routes/commissions.js";
 import downloadRoutes from "./routes/downloads.js";
 import paymentRoutes from "./routes/payments.js";
 
-import { initDB } from "./db.js";
+import db, { initDB } from "./db.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT ?? "3001");
@@ -93,4 +93,3 @@ if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
 }
 
 export default app;
-

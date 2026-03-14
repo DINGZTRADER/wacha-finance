@@ -13,6 +13,12 @@ export const isPostgres = !!connectionString;
 let pool: any = null;
 let sqlite: any = null;
 
+function ensureConfiguredDatabase() {
+    if (process.env.VERCEL && !isPostgres) {
+        throw new Error("Database is not configured for Vercel. Set POSTGRES_URL or DATABASE_URL.");
+    }
+}
+
 async function getSqlite() {
     if (sqlite) return sqlite;
     if (process.env.VERCEL) {
@@ -50,7 +56,7 @@ export const db = {
             const { rows } = await pool.query(text, params);
             return rows[0];
         }
-        if (process.env.VERCEL) return null;
+        ensureConfiguredDatabase();
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).get(...(params || []));
     },
@@ -59,13 +65,13 @@ export const db = {
             const { rows } = await pool.query(text, params);
             return rows;
         }
-        if (process.env.VERCEL) return [];
+        ensureConfiguredDatabase();
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).all(...(params || []));
     },
     async run(text: string, params?: any[]) {
         if (isPostgres) return pool.query(text, params);
-        if (process.env.VERCEL) return;
+        ensureConfiguredDatabase();
         const s = await getSqlite();
         return s.prepare(translateSQL(text)).run(...(params || []));
     }
