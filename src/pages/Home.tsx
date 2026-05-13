@@ -23,6 +23,7 @@ import {
     X,
     Music,
     Mic2,
+    Download,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
@@ -899,7 +900,7 @@ export default function Home() {
                                         Building since 2024
                                     </div>
                                 </div>
-                                <div className="pt-4 border-t border-border">
+                                <div className="pt-4 border-t border-border flex items-center gap-6">
                                     <a
                                         href="https://github.com/DINGZTRADER"
                                         target="_blank"
@@ -909,6 +910,14 @@ export default function Home() {
                                         <Github className="w-4 h-4" />
                                         @DINGZTRADER
                                         <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    </a>
+                                    <a
+                                        href="/Peter_Wacha_Executive_CV.pdf"
+                                        download
+                                        className="inline-flex items-center gap-2 text-sm text-foreground/80 font-semibold hover:text-primary transition-all group"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        Download CV
                                     </a>
                                 </div>
                             </div>
