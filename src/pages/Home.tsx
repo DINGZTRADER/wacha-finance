@@ -24,8 +24,13 @@ import {
     Music,
     Mic2,
     Download,
+    Phone,
+    MessageSquare,
+    Terminal,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import SEO from "@/components/SEO";
+import CaseStudies from "@/components/CaseStudies";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -45,6 +50,7 @@ type GitHubRepo = {
 /* ------------------------------------------------------------------ */
 const NAV_LINKS = [
     { label: "Products", href: "#products" },
+    { label: "Case Studies", href: "#cases" },
     { label: "Open Source", href: "#opensource" },
     { label: "Process", href: "#process" },
     { label: "Credentials", href: "#certifications" },
@@ -105,6 +111,45 @@ const PRODUCTS: {
         description:
             "AI automation assistant streamlining business workflows with intelligent task management.",
         icon: Cpu,
+        color: "from-sky-500/20 to-cyan-600/10",
+    },
+];
+
+const SERVICES = [
+    {
+        title: "AI Consultancy",
+        description: "Strategic AI roadmaps, technical feasibility audits, and integration planning to align your business with next-gen AI capabilities.",
+        icon: Target,
+        color: "from-blue-500/20 to-indigo-600/10",
+    },
+    {
+        title: "AI Automation",
+        description: "Automate repetitive tasks, document workflows, and data processing systems using intelligent AI agent workflows.",
+        icon: Cpu,
+        color: "from-emerald-500/20 to-teal-600/10",
+    },
+    {
+        title: "ChatGPT Integration",
+        description: "Embed OpenAI and custom language model capabilities into your applications, databases, and customer support channels.",
+        icon: MessageSquare,
+        color: "from-violet-500/20 to-purple-600/10",
+    },
+    {
+        title: "AI App Development",
+        description: "End-to-end engineering of custom web and mobile apps powered by deep learning and natural language processing.",
+        icon: Code2,
+        color: "from-amber-500/20 to-orange-600/10",
+    },
+    {
+        title: "Business AI Solutions",
+        description: "Enterprise-grade AI solutions tailored to hospitality, finance, marketing, and operational optimization.",
+        icon: Sparkles,
+        color: "from-pink-500/20 to-rose-600/10",
+    },
+    {
+        title: "Custom AI Tools",
+        description: "Bespoke scripts, scraping systems, automated report generators, and specialized algorithms for business analytics.",
+        icon: Terminal,
         color: "from-sky-500/20 to-cyan-600/10",
     },
 ];
@@ -486,6 +531,11 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-background text-foreground noise">
+            <SEO 
+                title="WachaAI | AI Consultancy & Business Automation | Kampala, Uganda"
+                description="WachaAI is Uganda's premier AI venture studio and consultancy in Kampala. We design custom AI models, ChatGPT integrations, and business automations."
+                keywords="AI Uganda, AI Consultancy Uganda, AI Kampala, ChatGPT Uganda, Business Automation Kampala, custom AI chatbot Uganda"
+            />
             <Navbar />
 
             {/* ── Uganda flag accent bar ─────────────────────────────── */}
@@ -511,7 +561,7 @@ export default function Home() {
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] text-primary text-xs font-medium mb-8"
                     >
                         <Zap className="w-3 h-3" />
-                        AI Venture Studio • Kampala, Uganda
+                        AI Consultancy & Solutions • Kampala, Uganda
                     </motion.div>
 
                     <motion.h1
@@ -520,10 +570,10 @@ export default function Home() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.06] text-balance"
                     >
-                        Building AI Ventures
+                        AI Consultancy &
                         <br className="hidden sm:block" />
                         <span className="bg-gradient-to-r from-primary via-cyan-300 to-primary bg-clip-text text-transparent">
-                            {" "}From Uganda
+                            {" "}AI Solutions in Uganda
                         </span>
                     </motion.h1>
 
@@ -535,32 +585,75 @@ export default function Home() {
                             delay: 0.2,
                             ease: "easeOut",
                         }}
-                        className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
+                        className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-balance"
                     >
-                        Practical AI tools, digital ventures, and real-world
-                        platforms — engineered in Kampala.
+                        WachaAI helps businesses, hotels, creators, and entrepreneurs use Artificial Intelligence to automate operations, improve productivity, and grow faster.
                     </motion.p>
 
+                    {/* Interactive Services Grid */}
+                    <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                        {SERVICES.map((service, i) => {
+                            const Icon = service.icon;
+                            return (
+                                <FadeIn key={service.title} delay={i * 0.08}>
+                                    <div className="group relative rounded-2xl border border-border bg-card/45 p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.06)] h-full overflow-hidden backdrop-blur-sm">
+                                        <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                                        <div className="relative z-10">
+                                            <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary/20 transition-colors">
+                                                <Icon className="w-5 h-5" />
+                                            </div>
+                                            <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                                                {service.title}
+                                            </h3>
+                                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                                {service.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </FadeIn>
+                            );
+                        })}
+                    </div>
+
+                    {/* Contact CTA Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+                        className="mt-16 max-w-3xl mx-auto p-8 rounded-3xl border border-primary/15 bg-primary/[0.02] backdrop-blur-sm relative overflow-hidden"
                     >
-                        <a
-                            href="#products"
-                            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:brightness-110 transition-all hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] hover:-translate-y-0.5"
-                        >
-                            Explore Products
-                            <ArrowUpRight className="w-4 h-4" />
-                        </a>
-                        <a
-                            href="#opensource"
-                            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border text-foreground/80 font-semibold text-sm hover:border-primary/30 hover:text-foreground transition-all hover:-translate-y-0.5"
-                        >
-                            Open Source
-                            <Github className="w-4 h-4" />
-                        </a>
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent pointer-events-none" />
+                        <h4 className="text-xl font-bold mb-2 text-foreground">
+                            Talk to Uganda’s AI Consultancy Team Today
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-6">
+                            Reach out to discuss custom automations, integrations, or training options.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+                            <a
+                                href="https://wa.me/256704650600"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:brightness-110 transition-all hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] hover:-translate-y-0.5"
+                            >
+                                <Zap className="w-4 h-4" />
+                                Contact Us on WhatsApp
+                            </a>
+                            <a
+                                href="tel:0704650600"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-border text-foreground font-semibold text-sm hover:border-primary/30 transition-all hover:-translate-y-0.5"
+                            >
+                                <Phone className="w-4 h-4 text-primary" />
+                                Call: 0704650600
+                            </a>
+                            <a
+                                href="mailto:wachaexperience@gmail.com"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-border text-foreground font-semibold text-sm hover:border-primary/30 transition-all hover:-translate-y-0.5"
+                            >
+                                <Mail className="w-4 h-4 text-primary" />
+                                wachaexperience@gmail.com
+                            </a>
+                        </div>
                     </motion.div>
 
                     {/* Scroll indicator */}
@@ -568,7 +661,7 @@ export default function Home() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2 }}
-                        className="mt-16"
+                        className="mt-12"
                     >
                         <motion.div
                             animate={{ y: [0, 8, 0] }}
@@ -603,6 +696,10 @@ export default function Home() {
 
             {/* ── Stats ──────────────────────────────────────────────── */}
             <StatsBanner />
+
+            {/* ── Case Studies ────────────────────────────────────────── */}
+            <CaseStudies />
+            <div className="section-divider" />
 
             {/* ── Products ───────────────────────────────────────────── */}
             <section

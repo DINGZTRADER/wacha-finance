@@ -11,6 +11,7 @@ import {
     Music,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import SEO from "@/components/SEO";
 
 export default function Download() {
     const { token } = useParams<{ token: string }>();
@@ -60,6 +61,11 @@ export default function Download() {
 
     return (
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+            <SEO 
+                title="Download Your Beat or Asset | WachaAI"
+                description="Secure download portal for your purchased WachaAI digital assets and instrumental beats."
+                keywords="download beats, digital files download"
+            />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

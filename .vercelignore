@@ -1,0 +1,52 @@
+# Ignore all backup/duplicated folders
+* (1)*
+* (1)/**/*
+
+# Ignore local node_modules (Vercel installs fresh)
+node_modules
+node_modules (1)
+server/node_modules
+
+# Ignore build output (Vercel builds fresh)
+dist
+dist (1)
+server/dist
+
+# Ignore large media files globally
+*.mp4
+*.mp3
+*.zip
+*.docx
+
+# Ignore large media files in root only (keep them in public/ and dist/)
+/*.pdf
+/*.PNG
+/*.png
+/*.jpeg
+/*.jpg
+
+# Ignore local large media/advertising/documentary folders
+MyAds
+MyDocumentary
+
+# Ignore server upload data
+server/uploads
+server/data
+
+# Ignore misc scripts
+*.js
+!api/**/*.ts
+!server/**/*.ts
+!server/**/*.js
+!src/**/*.ts
+!src/**/*.tsx
+
+# Standard ignores
+.git
+.git (1)
+.vercel
+.vercel (1)
+.vscode
+.idea
+*.log
+build.log

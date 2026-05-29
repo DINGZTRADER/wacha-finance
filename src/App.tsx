@@ -22,6 +22,10 @@ export default function App() {
             <Suspense fallback={<Loader />}>
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/ai-in-uganda" element={<Home />} />
+                    <Route path="/ai-consultancy-uganda" element={<Home />} />
+                    <Route path="/chatgpt-uganda" element={<Home />} />
+                    <Route path="/ai-automation-kampala" element={<Home />} />
                     <Route path="/store" element={<Store />} />
                     <Route path="/lab" element={<Lab />} />
                     <Route path="/commission" element={<Commission />} />

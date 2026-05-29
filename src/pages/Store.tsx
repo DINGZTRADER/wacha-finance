@@ -6,6 +6,7 @@ import SongCard from "@/components/music/SongCard";
 import PaymentModal from "@/components/music/PaymentModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type Song } from "@/lib/api";
+import SEO from "@/components/SEO";
 
 export default function Store() {
     const [songs, setSongs] = useState<Song[]>([]);
@@ -33,6 +34,11 @@ export default function Store() {
 
     return (
         <div className="min-h-screen bg-background text-foreground">
+            <SEO 
+                title="WachaAI Music & Tech Store | Buy Beats & Tech Assets"
+                description="Explore WachaAI's digital music store. Listen to high-quality audio previews and buy custom instrumental tracks and beats for UGX 3,000 each."
+                keywords="WachaAI store, buy beats Uganda, instrumentals Kampala, digital products, music library"
+            />
             {/* Header */}
             <div className="border-b border-border">
                 <div className="max-w-5xl mx-auto px-6 md:px-12 py-6 flex items-center gap-4">

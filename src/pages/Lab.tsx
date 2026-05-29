@@ -6,6 +6,7 @@ import SongCard from "@/components/music/SongCard";
 import PaymentModal from "@/components/music/PaymentModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type Song } from "@/lib/api";
+import SEO from "@/components/SEO";
 
 export default function Lab() {
     const [songs, setSongs] = useState<Song[]>([]);
@@ -25,6 +26,11 @@ export default function Lab() {
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+            <SEO 
+                title="WachaAI Music Lab | Experimental Neural Audio Composites"
+                description="Step into the WachaAI laboratory, exploring the boundary between machine learning and human audio composition. Experience neural-network generated beats and WAV stems."
+                keywords="AI music lab, Suno AI Uganda, algorithmic compositions, neural network audio, WAV stems"
+            />
             {/* Ambient Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />

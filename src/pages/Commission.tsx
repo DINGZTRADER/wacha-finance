@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api, type CommissionResponse } from "@/lib/api";
+import SEO from "@/components/SEO";
 
 type Step = "form" | "processing" | "instructions" | "success";
 
@@ -91,6 +92,11 @@ export default function Commission() {
 
     return (
         <div className="min-h-screen bg-background text-foreground">
+            <SEO 
+                title="Commission Custom Music & Audio Assets | WachaAI"
+                description="Hire WachaAI for custom audio production, sound design, jingles, and brand music templates. Fast delivery and direct Mobile Money payment integrations."
+                keywords="commission music Uganda, custom audio Kampala, brand jingle design, music production Kampala"
+            />
             {/* Header */}
             <div className="border-b border-border">
                 <div className="max-w-5xl mx-auto px-6 md:px-12 py-6 flex items-center gap-4">
