@@ -31,6 +31,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import SEO from "@/components/SEO";
 import CaseStudies from "@/components/CaseStudies";
+import Clients from "@/components/Clients";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -290,6 +291,13 @@ function Navbar() {
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
                         </a>
                     ))}
+                    <Link
+                        to="/contact"
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+                    >
+                        Contact
+                        <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
+                    </Link>
                     <div className="h-4 w-px bg-border" />
                     {MUSIC_LINKS.map((link) => (
                         <Link
@@ -343,6 +351,13 @@ function Navbar() {
                             {link.label}
                         </a>
                     ))}
+                    <Link
+                        to="/contact"
+                        onClick={handleNavClick}
+                        className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
+                    >
+                        Contact
+                    </Link>
                     <div className="h-px w-full bg-border my-2" />
                     {MUSIC_LINKS.map((link) => (
                         <Link
@@ -696,6 +711,10 @@ export default function Home() {
 
             {/* ── Stats ──────────────────────────────────────────────── */}
             <StatsBanner />
+
+            {/* ── Clients ────────────────────────────────────────────── */}
+            <Clients />
+            <div className="section-divider" />
 
             {/* ── Case Studies ────────────────────────────────────────── */}
             <CaseStudies />
@@ -1057,6 +1076,12 @@ export default function Home() {
                                         {link.label}
                                     </a>
                                 ))}
+                                <Link
+                                    to="/contact"
+                                    className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    Contact
+                                </Link>
                                 <div className="h-px w-full bg-border my-1" />
                                 {MUSIC_LINKS.map((link) => (
                                     <Link

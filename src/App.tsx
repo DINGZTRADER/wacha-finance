@@ -7,6 +7,7 @@ const Commission = lazy(() => import("@/pages/Commission"));
 const Download = lazy(() => import("@/pages/Download"));
 const Lab = lazy(() => import("@/pages/Lab"));
 const Admin = lazy(() => import("@/pages/admin/index"));
+const Contact = lazy(() => import("@/pages/Contact"));
 
 function Loader() {
     return (
@@ -31,6 +32,7 @@ export default function App() {
                     <Route path="/commission" element={<Commission />} />
                     <Route path="/download/:token" element={<Download />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/contact" element={<Contact />} />
                 </Routes>
             </Suspense>
         </BrowserRouter>
