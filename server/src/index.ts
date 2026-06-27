@@ -3,6 +3,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import express from "express";
 import cors from "cors";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import authRoutes from "./routes/auth.js";
@@ -11,6 +12,7 @@ import orderRoutes from "./routes/orders.js";
 import commissionRoutes from "./routes/commissions.js";
 import downloadRoutes from "./routes/downloads.js";
 import paymentRoutes from "./routes/payments.js";
+import videoRoutes from "./routes/video.js";
 
 import db, { initDB } from "./db.js";
 
@@ -45,6 +47,45 @@ app.use(
     express.static(path.join(__dirname, "..", "uploads", "covers"))
 );
 
+// Serve episodes publicly
+app.use(
+    "/episodes",
+    express.static(path.join(__dirname, "..", "..", "movie", "episodes"))
+);
+
+// Get all video episodes dynamically
+app.get("/api/episodes", async (_req, res) => {
+    try {
+        const episodesDir = path.join(__dirname, "..", "..", "movie", "episodes");
+        const fallbackEpisodes = [
+            { name: "MISSING IN KAMPALA #001 (1)", filename: "MISSING_IN_KAMPALA #001 (1).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(1).mp4" },
+            { name: "MISSING IN KAMPALA #001 (2)", filename: "MISSING_IN_KAMPALA #001 (2).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(2).mp4" },
+            { name: "MISSING IN KAMPALA #001 (3)", filename: "MISSING_IN_KAMPALA #001 (3).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(3).mp4" },
+            { name: "MISSING IN KAMPALA #001 (4)", filename: "MISSING_IN_KAMPALA #001 (4).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(4).mp4" },
+            { name: "MISSING IN KAMPALA #001 (5)", filename: "MISSING_IN_KAMPALA #001 (5).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(5).mp4" },
+            { name: "Terminal Velocity", filename: "Terminal_Velocity.mp4", url: "/episodes/Terminal_Velocity.mp4" }
+        ];
+        if (!fs.existsSync(episodesDir)) {
+            res.json(fallbackEpisodes);
+            return;
+        }
+        const files = await fs.promises.readdir(episodesDir);
+        const filteredFiles = files.filter(file => /\.(mp4|webm|mov|mkv)$/i.test(file));
+        if (filteredFiles.length === 0) {
+            res.json(fallbackEpisodes);
+            return;
+        }
+        const videos = filteredFiles.map(file => ({
+            name: file.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+            filename: file,
+            url: `/episodes/${encodeURIComponent(file)}`
+        }));
+        res.json(videos);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 /* ── Routes ──────────────────────────────────────────────────────── */
 app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
@@ -52,6 +93,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/commissions", commissionRoutes);
 app.use("/api/downloads", downloadRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/video", videoRoutes);
 
 /* ── Health check ────────────────────────────────────────────────── */
 app.get("/api/health", async (_req, res) => {

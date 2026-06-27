@@ -538,9 +538,10 @@ function EpisodesLoop() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent z-10 pointer-events-none" />
                         <video
                             key={activeVideo.filename}
-                            src={`${apiHost}${activeVideo.url}`}
+                            src={activeVideo.url.startsWith('/episodes') ? activeVideo.url : `${apiHost}${activeVideo.url}`}
                             controls
                             autoPlay
+                            loop
                             muted
                             onEnded={handleVideoEnded}
                             className="w-full h-full object-cover relative z-0"
@@ -575,7 +576,9 @@ function EpisodesLoop() {
                             >
                                 <div className="w-24 aspect-video rounded-lg overflow-hidden bg-black shrink-0 relative">
                                     <video
-                                        src={`${apiHost}${ep.url}`}
+                                        src={ep.url.startsWith('/episodes') ? ep.url : `${apiHost}${ep.url}`}
+                                        autoPlay
+                                        loop
                                         muted
                                         playsInline
                                         className="w-full h-full object-cover opacity-60"
