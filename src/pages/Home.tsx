@@ -474,6 +474,15 @@ function EpisodesLoop() {
                         if (JSON.stringify(prev) === JSON.stringify(data)) {
                             return prev;
                         }
+                        // Detect if a new video was added
+                        if (prev.length > 0 && data.length > 0) {
+                            const prevFilenames = new Set(prev.map(ep => ep.filename));
+                            const newVideo = data.find(ep => !prevFilenames.has(ep.filename));
+                            if (newVideo) {
+                                console.log("[EpisodesLoop] New video detected!", newVideo.filename);
+                                setActiveVideo(newVideo);
+                            }
+                        }
                         return data;
                     });
                     setLoading(false);
@@ -514,7 +523,7 @@ function EpisodesLoop() {
     const apiHost = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api" : "/api")).replace("/api", "");
 
     return (
-        <section className="px-6 md:px-12 py-20 md:py-28 max-w-6xl mx-auto">
+        <section className="px-6 md:px-12 pt-32 pb-16 md:pt-40 md:pb-20 max-w-6xl mx-auto">
             <FadeIn>
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
                     <div>
@@ -653,6 +662,9 @@ export default function Home() {
                 }}
             />
 
+            <EpisodesLoop />
+            <div className="section-divider" />
+
             {/* ── Hero ───────────────────────────────────────────────── */}
             <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0C1220]">
                 <HeroBackground />
@@ -783,8 +795,7 @@ export default function Home() {
             <CaseStudies />
             <div className="section-divider" />
 
-            <EpisodesLoop />
-            <div className="section-divider" />
+
 
             {/* ── Products ───────────────────────────────────────────── */}
             <section

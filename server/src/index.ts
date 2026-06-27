@@ -13,6 +13,7 @@ import commissionRoutes from "./routes/commissions.js";
 import downloadRoutes from "./routes/downloads.js";
 import paymentRoutes from "./routes/payments.js";
 import videoRoutes from "./routes/video.js";
+import { checkAndTrimVideos } from "./utils/videoTrimmer.js";
 
 import db, { initDB } from "./db.js";
 
@@ -20,12 +21,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT ?? "3001");
 
 // Initialize DB
-// Initialize DB
 if (process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL || !process.env.VERCEL) {
     initDB().catch(err => {
         console.error("DB Init Error:", err.message);
     });
 }
+
+// Run initial video size check/trim
+checkAndTrimVideos().catch(err => {
+    console.error("[Video Trimmer] Initial scan failed:", err.message);
+});
 
 /* ── Middleware ───────────────────────────────────────────────────── */
 export const app = express();
@@ -56,6 +61,11 @@ app.use(
 // Get all video episodes dynamically
 app.get("/api/episodes", async (_req, res) => {
     try {
+        // Trigger background scan/trim check when episodes are requested
+        checkAndTrimVideos().catch(err => {
+            console.error("[Video Trimmer] Route-triggered scan failed:", err.message);
+        });
+
         const episodesDir = path.join(__dirname, "..", "..", "movie", "episodes");
         const fallbackEpisodes = [
             { name: "MISSING IN KAMPALA #001 (1)", filename: "MISSING_IN_KAMPALA #001 (1).mp4", url: "/episodes/MISSING_IN_KAMPALA%20%23001%20(1).mp4" },
