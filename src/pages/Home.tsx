@@ -25,8 +25,8 @@ import {
     Mic2,
     Download,
     Phone,
-    MessageSquare,
-    Terminal,
+    Film,
+    Play,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import SEO from "@/components/SEO";
@@ -61,6 +61,7 @@ const NAV_LINKS = [
 const MUSIC_LINKS = [
     { label: "Music Store", href: "/store", icon: Music },
     { label: "AI Lab", href: "/lab", icon: Sparkles },
+    { label: "AI Video Studio", href: "/cinematics", icon: Film },
     { label: "Commission", href: "/commission", icon: Mic2 },
 ] as const;
 
@@ -78,6 +79,14 @@ const PRODUCTS: {
     color: string;
     href?: string;
 }[] = [
+    {
+        name: "WachaAI Video Studio",
+        description:
+            "Create high-impact, physics-locked cinematic cyberpunk video trailers with character anchors.",
+        icon: Film,
+        color: "from-cyan-500/20 to-blue-600/10",
+        href: "/cinematics",
+    },
     {
         name: "DingsJuice",
         description:
@@ -116,44 +125,6 @@ const PRODUCTS: {
     },
 ];
 
-const SERVICES = [
-    {
-        title: "AI Consultancy",
-        description: "Strategic AI roadmaps, technical feasibility audits, and integration planning to align your business with next-gen AI capabilities.",
-        icon: Target,
-        color: "from-blue-500/20 to-indigo-600/10",
-    },
-    {
-        title: "AI Automation",
-        description: "Automate repetitive tasks, document workflows, and data processing systems using intelligent AI agent workflows.",
-        icon: Cpu,
-        color: "from-emerald-500/20 to-teal-600/10",
-    },
-    {
-        title: "ChatGPT Integration",
-        description: "Embed OpenAI and custom language model capabilities into your applications, databases, and customer support channels.",
-        icon: MessageSquare,
-        color: "from-violet-500/20 to-purple-600/10",
-    },
-    {
-        title: "AI App Development",
-        description: "End-to-end engineering of custom web and mobile apps powered by deep learning and natural language processing.",
-        icon: Code2,
-        color: "from-amber-500/20 to-orange-600/10",
-    },
-    {
-        title: "Business AI Solutions",
-        description: "Enterprise-grade AI solutions tailored to hospitality, finance, marketing, and operational optimization.",
-        icon: Sparkles,
-        color: "from-pink-500/20 to-rose-600/10",
-    },
-    {
-        title: "Custom AI Tools",
-        description: "Bespoke scripts, scraping systems, automated report generators, and specialized algorithms for business analytics.",
-        icon: Terminal,
-        color: "from-sky-500/20 to-cyan-600/10",
-    },
-];
 
 const PROCESS_STEPS = [
     {
@@ -267,56 +238,40 @@ function Navbar() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                 scrolled
-                    ? "glass border-b border-border shadow-lg shadow-black/10"
+                    ? "bg-[#0C1220]/90 border-b border-[#38BDF8]/10 backdrop-blur-md"
                     : "bg-transparent"
             }`}
         >
-            <div className="max-w-5xl mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
                 <a
                     href="#"
-                    className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-2.5 font-bold tracking-widest text-white text-lg"
+                    style={{ fontFamily: '"Space Grotesk", sans-serif' }}
                 >
-                    Wacha<span className="text-primary">AI</span>
+                    <span className="w-3.5 h-3.5 bg-[#38BDF8] shrink-0" />
+                    WACHAAI
                 </a>
 
                 {/* Desktop nav */}
-                <div className="hidden md:flex items-center gap-8">
-                    {NAV_LINKS.map((link) => (
-                        <a
-                            key={link.href}
-                            href={link.href}
-                            className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
-                        >
-                            {link.label}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
-                        </a>
-                    ))}
-                    <Link
-                        to="/contact"
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
-                    >
-                        Contact
-                        <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
-                    </Link>
-                    <div className="h-4 w-px bg-border" />
-                    {MUSIC_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            to={link.href}
-                            className="inline-flex items-center gap-1.5 text-sm text-primary/80 hover:text-primary transition-colors font-medium"
-                        >
-                            <link.icon className="w-3.5 h-3.5" />
-                            {link.label}
-                        </Link>
-                    ))}
+                <div className="hidden md:flex items-center gap-10">
+                    <a href="#products" className="text-xs uppercase tracking-[0.2em] font-medium text-muted-foreground hover:text-white transition-colors">
+                        Studio
+                    </a>
+                    <a href="#cases" className="text-xs uppercase tracking-[0.2em] font-medium text-muted-foreground hover:text-white transition-colors">
+                        Solutions
+                    </a>
+                    <a href="#opensource" className="text-xs uppercase tracking-[0.2em] font-medium text-muted-foreground hover:text-white transition-colors">
+                        Creative
+                    </a>
+                    <a href="#certifications" className="text-xs uppercase tracking-[0.2em] font-medium text-muted-foreground hover:text-white transition-colors">
+                        Credentials
+                    </a>
+                    
                     <a
-                        href="https://github.com/DINGZTRADER"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                        aria-label="GitHub"
+                        href="#contact"
+                        className="border border-[#38BDF8] text-[#38BDF8] text-xs font-semibold uppercase tracking-[0.15em] px-5 py-2.5 hover:bg-[#38BDF8] hover:text-[#0C1220] transition-colors"
                     >
-                        <Github className="w-4.5 h-4.5" />
+                        [GET IN TOUCH]
                     </a>
                 </div>
 
@@ -339,44 +294,26 @@ function Navbar() {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="md:hidden glass border-b border-border px-6 pb-6 space-y-4"
+                    className="md:hidden bg-[#0C1220]/95 border-b border-[#38BDF8]/10 px-6 pb-6 space-y-4"
                 >
-                    {NAV_LINKS.map((link) => (
-                        <a
-                            key={link.href}
-                            href={link.href}
-                            onClick={handleNavClick}
-                            className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
-                        >
-                            {link.label}
-                        </a>
-                    ))}
-                    <Link
-                        to="/contact"
-                        onClick={handleNavClick}
-                        className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
-                    >
-                        Contact
-                    </Link>
-                    <div className="h-px w-full bg-border my-2" />
-                    {MUSIC_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            to={link.href}
-                            onClick={handleNavClick}
-                            className="flex items-center gap-2 text-sm text-primary/80 hover:text-primary transition-colors py-1 font-medium"
-                        >
-                            <link.icon className="w-4 h-4" /> {link.label}
-                        </Link>
-                    ))}
+                    <a href="#products" onClick={handleNavClick} className="block text-xs uppercase tracking-widest text-muted-foreground hover:text-white transition-colors py-2">
+                        Studio
+                    </a>
+                    <a href="#cases" onClick={handleNavClick} className="block text-xs uppercase tracking-widest text-muted-foreground hover:text-white transition-colors py-2">
+                        Solutions
+                    </a>
+                    <a href="#opensource" onClick={handleNavClick} className="block text-xs uppercase tracking-widest text-muted-foreground hover:text-white transition-colors py-2">
+                        Creative
+                    </a>
+                    <a href="#certifications" onClick={handleNavClick} className="block text-xs uppercase tracking-widest text-muted-foreground hover:text-white transition-colors py-2">
+                        Credentials
+                    </a>
                     <a
-                        href="https://github.com/DINGZTRADER"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="#contact"
                         onClick={handleNavClick}
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
+                        className="block border border-[#38BDF8] text-[#38BDF8] text-xs font-semibold uppercase tracking-widest text-center py-2.5 hover:bg-[#38BDF8] hover:text-[#0C1220] transition-colors"
                     >
-                        <Github className="w-4 h-4" /> GitHub
+                        [GET IN TOUCH]
                     </a>
                 </motion.div>
             )}
@@ -384,12 +321,15 @@ function Navbar() {
     );
 }
 
-function HeroOrbs() {
+function HeroBackground() {
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-            <div className="orb absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/[0.07] blur-[120px]" />
-            <div className="orb-delayed absolute -bottom-48 -right-48 w-[600px] h-[600px] rounded-full bg-violet-500/[0.05] blur-[140px]" />
-            <div className="orb absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-cyan-400/[0.04] blur-[100px]" />
+            <div 
+                className="absolute inset-0 bg-cover bg-center opacity-65 mix-blend-screen"
+                style={{ backgroundImage: 'url("/circuit-bg.png")' }}
+            />
+            {/* Soft glows underneath */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-[#38BDF8]/[0.05] blur-[150px]" />
         </div>
     );
 }
@@ -512,6 +452,155 @@ function CTASection() {
     );
 }
 
+type Episode = {
+    name: string;
+    filename: string;
+    url: string;
+};
+
+function EpisodesLoop() {
+    const [episodes, setEpisodes] = useState<Episode[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [activeVideo, setActiveVideo] = useState<Episode | null>(null);
+
+    useEffect(() => {
+        const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api" : "/api");
+        
+        const fetchEpisodes = () => {
+            fetch(`${apiBase}/episodes`)
+                .then(res => res.json())
+                .then((data: Episode[]) => {
+                    setEpisodes(prev => {
+                        if (JSON.stringify(prev) === JSON.stringify(data)) {
+                            return prev;
+                        }
+                        return data;
+                    });
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error("Failed to load episodes:", err);
+                    setLoading(false);
+                });
+        };
+
+        fetchEpisodes();
+        const interval = setInterval(fetchEpisodes, 10000); // Poll every 10 seconds for new renders
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // Set first active video when episodes load and no video is active
+    useEffect(() => {
+        if (episodes.length > 0 && !activeVideo) {
+            setActiveVideo(episodes[0]);
+        } else if (activeVideo) {
+            const exists = episodes.some(ep => ep.filename === activeVideo.filename);
+            if (!exists && episodes.length > 0) {
+                setActiveVideo(episodes[0]);
+            }
+        }
+    }, [episodes, activeVideo]);
+
+    const handleVideoEnded = () => {
+        if (episodes.length === 0 || !activeVideo) return;
+        const currentIndex = episodes.findIndex(ep => ep.filename === activeVideo.filename);
+        const nextIndex = (currentIndex + 1) % episodes.length;
+        setActiveVideo(episodes[nextIndex]);
+    };
+
+    if (loading || episodes.length === 0) return null;
+
+    const apiHost = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api" : "/api")).replace("/api", "");
+
+    return (
+        <section className="px-6 md:px-12 py-20 md:py-28 max-w-6xl mx-auto">
+            <FadeIn>
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                    <div>
+                        <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary">
+                            Creative Series
+                        </span>
+                        <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-white" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
+                            Missing in Kampala Series
+                        </h2>
+                        <p className="text-sm md:text-base text-muted-foreground mt-2 max-w-lg">
+                            Watch our neural-rendered cinematic thriller episodes, updated live from our render server.
+                        </p>
+                    </div>
+                </div>
+            </FadeIn>
+
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
+                {/* Main Theater Display */}
+                {activeVideo && (
+                    <div className="lg:col-span-8 rounded-3xl border border-white/10 bg-card/25 overflow-hidden relative group aspect-video shadow-2xl">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent z-10 pointer-events-none" />
+                        <video
+                            key={activeVideo.filename}
+                            src={`${apiHost}${activeVideo.url}`}
+                            controls
+                            autoPlay
+                            muted
+                            onEnded={handleVideoEnded}
+                            className="w-full h-full object-cover relative z-0"
+                        />
+                        <div className="absolute bottom-6 left-6 z-20">
+                            <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-[10px] font-mono uppercase tracking-wider mb-3 inline-block">
+                                NOW PLAYING
+                            </span>
+                            <h3 className="text-xl md:text-2xl font-bold text-white font-mono">
+                                {activeVideo.name}
+                            </h3>
+                        </div>
+                    </div>
+                )}
+
+                {/* Looping Thumbnail Track */}
+                <div className="lg:col-span-4 space-y-4 max-h-[460px] overflow-y-auto pr-2 scrollbar-thin">
+                    <div className="text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">
+                        Episode Directory ({episodes.length})
+                    </div>
+                    {episodes.map((ep, idx) => {
+                        const isActive = activeVideo?.filename === ep.filename;
+                        return (
+                            <button
+                                key={ep.filename}
+                                onClick={() => setActiveVideo(ep)}
+                                className={`w-full flex items-center gap-4 p-3 rounded-2xl border transition-all text-left ${
+                                    isActive
+                                        ? "bg-primary/10 border-primary/45 shadow-[0_0_20px_rgba(56,189,248,0.15)]"
+                                        : "bg-white/[0.02] border-white/5 hover:border-white/25 hover:bg-white/[0.04]"
+                                }`}
+                            >
+                                <div className="w-24 aspect-video rounded-lg overflow-hidden bg-black shrink-0 relative">
+                                    <video
+                                        src={`${apiHost}${ep.url}`}
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover opacity-60"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                        <Play className="w-4 h-4 text-white fill-current opacity-80" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-[10px] font-mono uppercase text-primary/60">
+                                        Episode 0{idx + 1}
+                                    </div>
+                                    <div className="text-sm font-bold text-white line-clamp-1 font-mono">
+                                        {ep.name}
+                                    </div>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
+    );
+}
+
 /* ------------------------------------------------------------------ */
 /* Main Page                                                           */
 /* ------------------------------------------------------------------ */
@@ -555,7 +644,7 @@ export default function Home() {
 
             {/* ── Uganda flag accent bar ─────────────────────────────── */}
             <div
-                className="h-[3px] w-full shrink-0"
+                className="h-[3px] w-full shrink-0 relative z-50"
                 style={{
                     background:
                         "linear-gradient(to right, #000 0%, #000 16.66%, #FCDC04 16.66%, #FCDC04 33.33%, #D90000 33.33%, #D90000 50%, #000 50%, #000 66.66%, #FCDC04 66.66%, #FCDC04 83.33%, #D90000 83.33%, #D90000 100%)",
@@ -563,33 +652,36 @@ export default function Home() {
             />
 
             {/* ── Hero ───────────────────────────────────────────────── */}
-            <section ref={heroRef} className="relative overflow-hidden dot-grid">
-                <HeroOrbs />
+            <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0C1220]">
+                <HeroBackground />
                 <motion.div
                     style={{ opacity: heroOpacity, y: heroY }}
-                    className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 pt-32 pb-16 md:pt-40 md:pb-24 text-center"
+                    className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 pt-40 pb-24 text-left w-full"
                 >
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] text-primary text-xs font-medium mb-8"
+                        className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.3em] text-[#38BDF8] uppercase mb-8"
                     >
-                        <Zap className="w-3 h-3" />
-                        AI Consultancy & Solutions • Kampala, Uganda
+                        <span className="w-1.5 h-6 bg-[#38BDF8] inline-block shrink-0" />
+                        SYSTEM INITIALIZATION
                     </motion.div>
 
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.06] text-balance"
+                        className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1] text-white"
+                        style={{ fontFamily: '"Space Grotesk", sans-serif' }}
                     >
-                        AI Consultancy &
-                        <br className="hidden sm:block" />
-                        <span className="bg-gradient-to-r from-primary via-cyan-300 to-primary bg-clip-text text-transparent">
-                            {" "}AI Solutions in Uganda
-                        </span>
+                        AI venture studio
+                        <br />
+                        building <span className="text-[#38BDF8]">practical</span>
+                        <br />
+                        <span className="text-[#38BDF8]">technology</span> from
+                        <br />
+                        Kampala, Uganda.
                     </motion.h1>
 
                     <motion.p
@@ -600,75 +692,44 @@ export default function Home() {
                             delay: 0.2,
                             ease: "easeOut",
                         }}
-                        className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-balance"
+                        className="mt-8 text-base md:text-lg text-muted-foreground/80 max-w-2xl leading-relaxed font-light"
+                        style={{ fontFamily: '"Space Grotesk", sans-serif' }}
                     >
-                        WachaAI helps businesses, hotels, creators, and entrepreneurs use Artificial Intelligence to automate operations, improve productivity, and grow faster.
+                        Developing pragmatic software and digital platforms to solve real-world problems.
+                        <br />
+                        Accessible, impactful, and engineered for the African market.
                     </motion.p>
-
-                    {/* Interactive Services Grid */}
-                    <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-                        {SERVICES.map((service, i) => {
-                            const Icon = service.icon;
-                            return (
-                                <FadeIn key={service.title} delay={i * 0.08}>
-                                    <div className="group relative rounded-2xl border border-border bg-card/45 p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.06)] h-full overflow-hidden backdrop-blur-sm">
-                                        <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                                        <div className="relative z-10">
-                                            <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary/20 transition-colors">
-                                                <Icon className="w-5 h-5" />
-                                            </div>
-                                            <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                                                {service.title}
-                                            </h3>
-                                            <p className="text-muted-foreground text-sm leading-relaxed">
-                                                {service.description}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </FadeIn>
-                            );
-                        })}
-                    </div>
 
                     {/* Contact CTA Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="mt-16 max-w-3xl mx-auto p-8 rounded-3xl border border-primary/15 bg-primary/[0.02] backdrop-blur-sm relative overflow-hidden"
+                        className="mt-12 flex flex-col sm:flex-row items-center gap-4 relative z-10"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent pointer-events-none" />
-                        <h4 className="text-xl font-bold mb-2 text-foreground">
-                            Talk to Uganda’s AI Consultancy Team Today
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-6">
-                            Reach out to discuss custom automations, integrations, or training options.
-                        </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                            <a
-                                href="https://wa.me/256704650600"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:brightness-110 transition-all hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] hover:-translate-y-0.5"
-                            >
-                                <Zap className="w-4 h-4" />
-                                Contact Us on WhatsApp
-                            </a>
-                            <a
-                                href="tel:0704650600"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-border text-foreground font-semibold text-sm hover:border-primary/30 transition-all hover:-translate-y-0.5"
-                            >
-                                <Phone className="w-4 h-4 text-primary" />
-                                Call: 0704650600
-                            </a>
-                            <a
-                                href="mailto:wachaexperience@gmail.com"
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-border text-foreground font-semibold text-sm hover:border-primary/30 transition-all hover:-translate-y-0.5"
-                            >
-                                <Mail className="w-4 h-4 text-primary" />
-                                wachaexperience@gmail.com
-                            </a>
-                        </div>
+                        <a
+                            href="https://wa.me/256704650600"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-none bg-[#38BDF8] text-[#0C1220] font-bold uppercase tracking-[0.15em] text-xs hover:brightness-110 transition-all hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] hover:-translate-y-0.5"
+                        >
+                            <Zap className="w-4 h-4" />
+                            WhatsApp Us
+                        </a>
+                        <a
+                            href="tel:0704650600"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-none border border-white/20 text-white font-bold uppercase tracking-[0.15em] text-xs hover:border-[#38BDF8]/40 transition-all hover:-translate-y-0.5"
+                        >
+                            <Phone className="w-4 h-4 text-[#38BDF8]" />
+                            Call: 0704650600
+                        </a>
+                        <a
+                            href="mailto:wachaexperience@gmail.com"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-none border border-white/20 text-white font-bold uppercase tracking-[0.15em] text-xs hover:border-[#38BDF8]/40 transition-all hover:-translate-y-0.5"
+                        >
+                            <Mail className="w-4 h-4 text-[#38BDF8]" />
+                            Email Us
+                        </a>
                     </motion.div>
 
                     {/* Scroll indicator */}
@@ -676,7 +737,7 @@ export default function Home() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2 }}
-                        className="mt-12"
+                        className="mt-20"
                     >
                         <motion.div
                             animate={{ y: [0, 8, 0] }}
@@ -686,7 +747,7 @@ export default function Home() {
                                 ease: "easeInOut",
                             }}
                         >
-                            <ChevronDown className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                            <ChevronDown className="w-5 h-5 text-[#38BDF8]/60" />
                         </motion.div>
                     </motion.div>
                 </motion.div>
@@ -720,6 +781,9 @@ export default function Home() {
             <CaseStudies />
             <div className="section-divider" />
 
+            <EpisodesLoop />
+            <div className="section-divider" />
+
             {/* ── Products ───────────────────────────────────────────── */}
             <section
                 id="products"
@@ -741,41 +805,50 @@ export default function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {PRODUCTS.map((product, i) => {
                         const Icon = product.icon;
-                        const CardWrapper = product.href ? "a" : "div";
-                        const linkProps = product.href
-                            ? {
-                                  href: product.href,
-                                  target: "_blank" as const,
-                                  rel: "noopener noreferrer",
-                              }
-                            : {};
+                        const isInternal = product.href?.startsWith("/");
+                        
+                        const renderContent = () => (
+                            <>
+                                {/* Gradient accent */}
+                                <div
+                                    className={`absolute inset-0 bg-gradient-to-br ${product.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                                />
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary">
+                                            <Icon className="w-5 h-5" />
+                                        </div>
+                                        {product.href && (
+                                            <ExternalLink className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary/60 transition-colors" />
+                                        )}
+                                    </div>
+                                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                                        {product.name}
+                                    </h3>
+                                    <p className="text-muted-foreground text-sm leading-relaxed">
+                                        {product.description}
+                                    </p>
+                                </div>
+                            </>
+                        );
+
+                        const cardClass = `group block rounded-2xl border border-border bg-card/40 p-7 hover:border-primary/25 hover:-translate-y-1.5 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(56,189,248,0.06)] h-full relative overflow-hidden`;
+
                         return (
                             <FadeIn key={product.name} delay={i * 0.1}>
-                                <CardWrapper
-                                    {...linkProps}
-                                    className={`group block rounded-2xl border border-border bg-card/40 p-7 hover:border-primary/25 hover:-translate-y-1.5 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(56,189,248,0.06)] h-full relative overflow-hidden`}
-                                >
-                                    {/* Gradient accent */}
-                                    <div
-                                        className={`absolute inset-0 bg-gradient-to-br ${product.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                                    />
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-5">
-                                            <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary">
-                                                <Icon className="w-5 h-5" />
-                                            </div>
-                                            {product.href && (
-                                                <ExternalLink className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary/60 transition-colors" />
-                                            )}
-                                        </div>
-                                        <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                                            {product.name}
-                                        </h3>
-                                        <p className="text-muted-foreground text-sm leading-relaxed">
-                                            {product.description}
-                                        </p>
+                                {isInternal ? (
+                                    <Link to={product.href!} className={cardClass}>
+                                        {renderContent()}
+                                    </Link>
+                                ) : product.href ? (
+                                    <a href={product.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+                                        {renderContent()}
+                                    </a>
+                                ) : (
+                                    <div className={cardClass}>
+                                        {renderContent()}
                                     </div>
-                                </CardWrapper>
+                                )}
                             </FadeIn>
                         );
                     })}
