@@ -21,7 +21,7 @@ const PORT = parseInt(process.env.PORT ?? "3001");
 
 // Initialize DB
 // Initialize DB
-if (process.env.POSTGRES_URL || process.env.DATABASE_URL || !process.env.VERCEL) {
+if (process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL || !process.env.VERCEL) {
     initDB().catch(err => {
         console.error("DB Init Error:", err.message);
     });
@@ -104,7 +104,7 @@ app.get("/api/health", async (_req, res) => {
         database: isPostgres ? "Postgres" : "None/SQLite (Local Only)",
         setup_required: !isPostgres && !!process.env.VERCEL,
         env: {
-            has_postgres_url: !!process.env.POSTGRES_URL,
+            has_postgres_url: !!process.env.POSTGRES_URL || !!process.env.POSTGRES_PRISMA_URL,
             has_database_url: !!process.env.DATABASE_URL,
             node_env: process.env.NODE_ENV
         },

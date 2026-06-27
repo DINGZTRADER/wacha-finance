@@ -1,7 +1,7 @@
 import pg from "pg";
 const { Client } = pg;
 
-const connectionString = "postgres://postgres.lvbblxadgxajnfdjipfr:GyA6CPBggeBh0j56@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require";
+const connectionString = "postgres://postgres.lvbblxadgxajnfdjipfr:J35u5chr15t15l0rd@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=no-verify";
 
 async function check() {
     const client = new Client({

@@ -8,7 +8,11 @@ const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Use Vercel Postgres connection string if available
-export const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+let rawConnectionString = process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+if (rawConnectionString && rawConnectionString.startsWith('"') && rawConnectionString.endsWith('"')) {
+    rawConnectionString = rawConnectionString.slice(1, -1);
+}
+export const connectionString = rawConnectionString;
 export const isPostgres = !!connectionString;
 
 let pool: any = null;
@@ -16,14 +20,14 @@ let sqlite: any = null;
 
 function ensureConfiguredDatabase() {
     if (process.env.VERCEL && !isPostgres) {
-        throw new Error("Database is not configured for Vercel. Set POSTGRES_URL or DATABASE_URL.");
+        throw new Error("Database is not configured for Vercel. Set POSTGRES_URL, POSTGRES_PRISMA_URL, or DATABASE_URL.");
     }
 }
 
 async function getSqlite() {
     if (sqlite) return sqlite;
     if (process.env.VERCEL) {
-        throw new Error("SQLite is not supported on Vercel. Please configure POSTGRES_URL.");
+        throw new Error("SQLite is not supported on Vercel. Please configure POSTGRES_URL or POSTGRES_PRISMA_URL.");
     }
     // Dynamic import hidden from Vercel NFT tracer to avoid build/runtime errors
     const dbModuleName = "better-sqlite3";
