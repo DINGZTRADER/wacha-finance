@@ -25,8 +25,9 @@ async function getSqlite() {
     if (process.env.VERCEL) {
         throw new Error("SQLite is not supported on Vercel. Please configure POSTGRES_URL.");
     }
-    // Dynamic import to avoid Vercel build errors with native modules
-    const { default: Database } = await import("better-sqlite3");
+    // Dynamic import hidden from Vercel NFT tracer to avoid build/runtime errors
+    const dbModuleName = "better-sqlite3";
+    const { default: Database } = await import(dbModuleName);
     const DB_PATH = path.join(__dirname, "..", "data", "music.db");
     sqlite = new Database(DB_PATH);
     sqlite.pragma("journal_mode = WAL");
