@@ -14,6 +14,9 @@ import downloadRoutes from "./routes/downloads.js";
 import paymentRoutes from "./routes/payments.js";
 import videoRoutes from "./routes/video.js";
 import { checkAndTrimVideos } from "./utils/videoTrimmer.js";
+import financeRoutes from "./routes/finance.js";
+import reportRoutes from "./routes/reports.js";
+
 
 import db, { initDB } from "./db.js";
 
@@ -104,6 +107,9 @@ app.use("/api/commissions", commissionRoutes);
 app.use("/api/downloads", downloadRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/video", videoRoutes);
+app.use("/api/finance", financeRoutes);
+app.use("/api/reports", reportRoutes);
+
 
 /* ── Health check ────────────────────────────────────────────────── */
 app.get("/api/health", async (_req, res) => {

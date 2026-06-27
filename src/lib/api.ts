@@ -203,4 +203,48 @@ export const api = {
             downloads_remaining: number;
         }>(`/downloads/${token}/status`),
     getDownloadUrl: (token: string) => `${API_BASE}/downloads/${token}`,
+
+    /* Finance & Pipelines */
+    getTransactions: (token: string) => request<Transaction[]>("/finance/transactions", { token }),
+    deleteTransaction: (id: string, token: string) =>
+        request<{ success: boolean }>(`/finance/transactions/${id}`, { method: "DELETE", token }),
+    processDocument: (fileUrl: string) =>
+        request<{
+            success: boolean;
+            transactionId: string;
+            totalAmount: number;
+            duplicate?: boolean;
+            extractedData: Partial<Transaction>;
+        }>("/finance/process-document", {
+            method: "POST",
+            body: { file_url: fileUrl }
+        }),
+    triggerWeeklyReportDigest: (token: string) =>
+        request<{
+            message: string;
+            success: boolean;
+            sentTo: string[];
+            summary: {
+                totalRevenue: number;
+                totalExpenses: number;
+                netProfit: number;
+                count: number;
+            };
+        }>("/reports/trigger-report-manual", { method: "POST", token })
+};
+
+export type Transaction = {
+    id: string;
+    type: "revenue" | "expense";
+    date: string;
+    vendor_client_name: string;
+    tin_number: string | null;
+    invoice_receipt_no: string | null;
+    payment_format: "mobile_money" | "credit_card" | "cash" | "bank_transfer";
+    currency: string;
+    subtotal: number;
+    vat_amount: number;
+    total_amount: number;
+    file_url: string | null;
+    created_at: string;
 };
