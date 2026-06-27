@@ -3,7 +3,6 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -13,6 +12,23 @@ dist-ssr
 *.local
 build.log
 tsconfig.tsbuildinfo
+
+# Build/Dependency artifacts
+.next
+out
+.nuxt
+.cache
+.svelte-kit
+.docusaurus
+
+# Virtual Environments
+venv
+.venv
+env
+.env
+ENV
+env.bak
+venv.bak
 
 # Server
 server/.env

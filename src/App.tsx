@@ -6,6 +6,7 @@ const Store = lazy(() => import("@/pages/Store"));
 const Commission = lazy(() => import("@/pages/Commission"));
 const Download = lazy(() => import("@/pages/Download"));
 const Lab = lazy(() => import("@/pages/Lab"));
+const Cinematics = lazy(() => import("@/pages/Cinematics"));
 const Admin = lazy(() => import("@/pages/admin/index"));
 const Contact = lazy(() => import("@/pages/Contact"));
 
@@ -29,6 +30,7 @@ export default function App() {
                     <Route path="/ai-automation-kampala" element={<Home />} />
                     <Route path="/store" element={<Store />} />
                     <Route path="/lab" element={<Lab />} />
+                    <Route path="/cinematics" element={<Cinematics />} />
                     <Route path="/commission" element={<Commission />} />
                     <Route path="/download/:token" element={<Download />} />
                     <Route path="/admin" element={<Admin />} />
