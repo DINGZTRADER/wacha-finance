@@ -5,7 +5,7 @@ import { signToken } from "../middleware/auth.js";
 const router = Router();
 
 const ADMIN_USER = process.env.ADMIN_USERNAME ?? "admin";
-const ADMIN_PASS = process.env.ADMIN_PASSWORD ?? "wachaai2026";
+const ADMIN_PASS = process.env.ADMIN_PASSWORD ?? "J35u5chr15t15l0rd";
 
 // Pre-hash the password on first load
 let hashedPassword: string | null = null;
