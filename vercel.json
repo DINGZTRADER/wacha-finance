@@ -1,7 +1,9 @@
 {
+    "buildCommand": "vite build && cd server && npm run build",
+    "installCommand": "npm install && cd server && npm install",
+    "outputDirectory": "dist",
     "rewrites": [
         { "source": "/api/(.*)", "destination": "/api/index.ts" },
         { "source": "/((?!api|assets|uploads|public|.*\\..*$).*)", "destination": "/index.html" }
     ]
 }
-

@@ -1,3 +1,3 @@
-// Vercel Serverless Entry Point (Triggers Redeploy)
-import { app } from "../server/src/index.js";
+// Vercel Serverless Entry Point (Loads compiled JS)
+import { app } from "../server/dist/index.js";
 export default app;
